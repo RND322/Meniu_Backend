@@ -1,0 +1,66 @@
+{
+  "version": "0.0.1",
+  "name": "meniu-backend",
+  "dependencies": {
+    "@nestjs/cli": {
+      "version": "10.4.9",
+      "resolved": "https://registry.npmjs.org/@nestjs/cli/-/cli-10.4.9.tgz",
+      "overridden": false
+    },
+    "@nestjs/common": {
+      "version": "10.4.19",
+      "resolved": "https://registry.npmjs.org/@nestjs/common/-/common-10.4.19.tgz",
+      "overridden": false
+    },
+    "@nestjs/core": {
+      "version": "10.4.19",
+      "resolved": "https://registry.npmjs.org/@nestjs/core/-/core-10.4.19.tgz",
+      "overridden": false
+    },
+    "@nestjs/platform-express": {
+      "version": "10.4.19",
+      "resolved": "https://registry.npmjs.org/@nestjs/platform-express/-/platform-express-10.4.19.tgz",
+      "overridden": false
+    },
+    "@nestjs/schematics": {
+      "version": "10.2.3",
+      "resolved": "https://registry.npmjs.org/@nestjs/schematics/-/schematics-10.2.3.tgz",
+      "overridden": false
+    },
+    "@nestjs/testing": {
+      "version": "10.4.19",
+      "resolved": "https://registry.npmjs.org/@nestjs/testing/-/testing-10.4.19.tgz",
+      "overridden": false
+    },
+    "@nestjs/typeorm": {
+      "version": "10.0.2",
+      "resolved": "https://registry.npmjs.org/@nestjs/typeorm/-/typeorm-10.0.2.tgz",
+      "overridden": false
+    },
+    "reflect-metadata": {
+      "version": "0.1.14",
+      "resolved": "https://registry.npmjs.org/reflect-metadata/-/reflect-metadata-0.1.14.tgz",
+      "overridden": false
+    },
+    "rxjs": {
+      "version": "7.8.2",
+      "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-7.8.2.tgz",
+      "overridden": false
+    },
+    "ts-node": {
+      "version": "10.9.2",
+      "resolved": "https://registry.npmjs.org/ts-node/-/ts-node-10.9.2.tgz",
+      "overridden": false
+    },
+    "typeorm": {
+      "version": "0.3.25",
+      "resolved": "https://registry.npmjs.org/typeorm/-/typeorm-0.3.25.tgz",
+      "overridden": false
+    },
+    "typescript": {
+      "version": "5.8.3",
+      "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.8.3.tgz",
+      "overridden": false
+    }
+  }
+}
