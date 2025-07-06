@@ -6,7 +6,7 @@ export class CategoriaProducto {
   @PrimaryGeneratedColumn()
   id_categoria: number;
 
-  @Column()
+  @Column({ length: 100 })
   nombre: string;
 
   @Column({ default: 1 })

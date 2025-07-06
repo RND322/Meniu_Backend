@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Restaurante } from './restaurante.entity';
 import { MetodoPago } from './metodo-pago.entity';
 import { Plan } from './plan.entity';
@@ -18,11 +18,14 @@ export class Suscripcion {
   activa: number;
 
   @ManyToOne(() => Restaurante, restaurante => restaurante.suscripciones)
+  @JoinColumn({ name: 'id_restaurante' })
   restaurante: Restaurante;
 
   @ManyToOne(() => MetodoPago, metodoPago => metodoPago.suscripciones)
+  @JoinColumn({ name: 'id_metodo_pago' })
   metodoPago: MetodoPago;
 
   @ManyToOne(() => Plan, plan => plan.suscripciones)
+  @JoinColumn({ name: 'id_plan' })
   plan: Plan;
 }

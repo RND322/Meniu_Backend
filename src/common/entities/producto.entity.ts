@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Restaurante } from './restaurante.entity';
 import { SubcategoriaProducto } from './subcategoria-producto.entity';
 import { OrdenItem } from './orden-item.entity';
@@ -8,7 +8,7 @@ export class Producto {
   @PrimaryGeneratedColumn()
   id_producto: number;
 
-  @Column()
+  @Column({ length: 100 })
   nombre: string;
 
   @Column('text')
@@ -24,9 +24,11 @@ export class Producto {
   activo: number;
 
   @ManyToOne(() => Restaurante, restaurante => restaurante.productos)
+  @JoinColumn({ name: 'id_restaurante' })
   restaurante: Restaurante;
 
   @ManyToOne(() => SubcategoriaProducto, subcategoria => subcategoria.productos)
+  @JoinColumn({ name: 'id_subcategoria' })
   subcategoria: SubcategoriaProducto;
 
   @OneToMany(() => OrdenItem, item => item.producto)

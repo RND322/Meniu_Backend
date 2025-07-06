@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
+// Módulos
+import { AuthModule } from './auth/auth.module';
+
 //Entidades
 import { Rol } from './common/entities/rol.entity';
 import { Usuario } from './common/entities/usuario.entity';
@@ -19,17 +22,25 @@ import { OrdenItem } from './common/entities/orden-item.entity';
 import { Plan } from './common/entities/plan.entity';
 import { MetodoPago } from './common/entities/metodo-pago.entity';
 import { Suscripcion } from './common/entities/suscripcion.entity';
-import { AuthModule } from './auth/auth.module';
+
+// Servicios
+import { ProductosService } from './services/productos.service';
+
+// Controladores
+import { ProductosController } from './controllers/productos.controller';
 
 @Module({
   imports: [
-     ConfigModule.forRoot({
+    // Carga variables de entorno
+    ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
-    
+
+    // Módulos externos
     AuthModule,
-  
+
+    // Conexión a la BD con TypeORM
     TypeOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
         type: 'mysql' as const,
@@ -44,13 +55,32 @@ import { AuthModule } from './auth/auth.module';
       }),
       inject: [ConfigService],
     }),
+
+    // Registra todas las entidades como feature modules
+    TypeOrmModule.forFeature([
+      Rol,
+      Usuario,
+      Persona,
+      Email,
+      Restaurante,
+      Mesa,
+      CategoriaProducto,
+      SubcategoriaProducto,
+      Producto,
+      Orden,
+      OrdenItem,
+      Plan,
+      MetodoPago,
+      Suscripcion
+    ]),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [
+    AppController,
+    ProductosController, // Registro del controlador
+  ],
+  providers: [
+    AppService,
+    ProductosService, // Registro del servicio
+  ],
 })
 export class AppModule {}
-
-
-
-
-

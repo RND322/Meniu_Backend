@@ -6,7 +6,7 @@ export class Plan {
   @PrimaryGeneratedColumn()
   id_plan: number;
 
-  @Column()
+  @Column({ length: 100 })
   nombre_plan: string;
 
   @Column()

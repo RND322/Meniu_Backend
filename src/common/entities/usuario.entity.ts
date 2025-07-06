@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Rol } from './rol.entity';
 import { Persona } from './persona.entity';
 import { Email } from './email.entity';
@@ -10,10 +10,10 @@ export class Usuario {
   @PrimaryGeneratedColumn()
   id_usuario: number;
 
-  @Column({ name: 'nombre_usuario' })
+  @Column({ name: 'nombre_usuario',  length: 100 })
   nombreUsuario: string;
 
-  @Column()
+  @Column({ length: 100 })
   password: string;
 
   @Column({ default: 1 })
@@ -23,6 +23,7 @@ export class Usuario {
   fechaCreacion: Date;
 
   @ManyToOne(() => Rol, rol => rol.usuarios)
+  @JoinColumn({ name: 'id_rol' })
   rol: Rol;
 
   @OneToMany(() => Persona, persona => persona.usuario)

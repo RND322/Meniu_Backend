@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Restaurante } from './restaurante.entity';
 import { Mesa } from './mesa.entity';
 import { OrdenItem } from './orden-item.entity';
@@ -8,19 +8,19 @@ export class Orden {
   @PrimaryGeneratedColumn()
   id_orden: number;
 
-  @Column()
+  @Column({ length: 50 })
   estado: string;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   fecha: Date;
 
-  @Column({ nullable: true })
+  @Column(({ type: 'time', nullable: true }))
   hora_confirmacion: string;
 
-  @Column({ nullable: true })
+  @Column(({ type: 'time', nullable: true }))
   hora_lista: string;
 
-  @Column({ nullable: true })
+  @Column(({ type: 'time', nullable: true }))
   hora_entregada: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
@@ -36,9 +36,11 @@ export class Orden {
   solicitud_pago: boolean;
 
   @ManyToOne(() => Restaurante, restaurante => restaurante.ordenes)
+  @JoinColumn({ name: 'id_restaurante' })
   restaurante: Restaurante;
 
   @ManyToOne(() => Mesa, mesa => mesa.ordenes)
+  @JoinColumn({ name: 'id_mesa' })
   mesa: Mesa;
 
   @OneToMany(() => OrdenItem, item => item.orden)

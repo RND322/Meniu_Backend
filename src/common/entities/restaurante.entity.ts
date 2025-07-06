@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Usuario } from './usuario.entity';
 import { Mesa } from './mesa.entity';
 import { Producto } from './producto.entity';
@@ -10,16 +10,16 @@ export class Restaurante {
   @PrimaryGeneratedColumn()
   id_restaurante: number;
 
-  @Column()
+  @Column({ length: 100 })
   nombre: string;
 
-  @Column()
+  @Column({ length: 150 })
   email: string;
 
   @Column()
   direccion: string;
 
-  @Column()
+  @Column({ length: 20 })
   telefono: string;
 
   @Column()
@@ -35,6 +35,7 @@ export class Restaurante {
   fechaCreacion: Date;
 
   @ManyToOne(() => Usuario, usuario => usuario.restaurantes)
+  @JoinColumn({ name: 'id_usuario' })
   usuario: Usuario;
 
   @OneToMany(() => Mesa, mesa => mesa.restaurante)
