@@ -8,33 +8,33 @@ import { MetodoPago } from './metodo-pago.entity';
 @Entity('usuarios')
 export class Usuario {
   @PrimaryGeneratedColumn()
-  id_usuario: number;
+  id_usuario!: number;
 
   @Column({ name: 'nombre_usuario',  length: 100 })
-  nombreUsuario: string;
+  nombreUsuario!: string;
 
   @Column({ length: 100 })
-  password: string;
+  password!: string;
 
   @Column({ default: 1 })
-  activo: number;
+  activo!: number;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  fechaCreacion: Date;
+  fechaCreacion!: Date;
 
   @ManyToOne(() => Rol, rol => rol.usuarios)
   @JoinColumn({ name: 'id_rol' })
-  rol: Rol;
+  rol!: Rol;
 
   @OneToMany(() => Persona, persona => persona.usuario)
-  personas: Persona[];
+  personas!: Persona[];
 
   @OneToMany(() => Email, email => email.usuario)
-  emails: Email[];
+  emails!: Email[];
 
   @OneToMany(() => Restaurante, restaurante => restaurante.usuario)
-  restaurantes: Restaurante[];
+  restaurantes!: Restaurante[];
 
   @OneToMany(() => MetodoPago, metodoPago => metodoPago.usuario)
-  metodosPago: MetodoPago[];
+  metodosPago!: MetodoPago[];
 }

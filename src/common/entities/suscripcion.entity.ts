@@ -6,26 +6,26 @@ import { Plan } from './plan.entity';
 @Entity('suscripciones')
 export class Suscripcion {
   @PrimaryGeneratedColumn()
-  id_suscripcion: number;
+  id_suscripcion!: number;
 
   @Column({ type: 'date' })
-  fecha_inicio: string;
+  fecha_inicio!: string;
 
   @Column({ type: 'date' })
-  fecha_cobro: string;
+  fecha_cobro!: string;
 
   @Column({ default: 1 })
-  activa: number;
+  activa!: number;
 
   @ManyToOne(() => Restaurante, restaurante => restaurante.suscripciones)
   @JoinColumn({ name: 'id_restaurante' })
-  restaurante: Restaurante;
+  restaurante!: Restaurante;
 
   @ManyToOne(() => MetodoPago, metodoPago => metodoPago.suscripciones)
   @JoinColumn({ name: 'id_metodo_pago' })
-  metodoPago: MetodoPago;
+  metodoPago!: MetodoPago;
 
   @ManyToOne(() => Plan, plan => plan.suscripciones)
   @JoinColumn({ name: 'id_plan' })
-  plan: Plan;
+  plan!: Plan;
 }

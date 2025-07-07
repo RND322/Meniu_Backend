@@ -5,22 +5,22 @@ import { Producto } from './producto.entity';
 @Entity('orden_items')
 export class OrdenItem {
   @PrimaryGeneratedColumn()
-  id_orden_item: number;
+  id_orden_item!: number;
 
   @Column()
-  cantidad: number;
+  cantidad!: number;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  precio_unitario: number;
+  precio_unitario!: number;
 
   @Column({ nullable: true })
-  notas: string;
+  notas!: string;
 
   @ManyToOne(() => Orden, orden => orden.items)
   @JoinColumn({ name: 'id_orden' })
-  orden: Orden;
+  orden!: Orden;
 
   @ManyToOne(() => Producto, producto => producto.ordenItems)
   @JoinColumn({ name: 'id_producto' })
-  producto: Producto;
+  producto!: Producto;
 }

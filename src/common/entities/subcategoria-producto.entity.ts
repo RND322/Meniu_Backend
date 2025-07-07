@@ -5,18 +5,18 @@ import { Producto } from './producto.entity';
 @Entity('subcategorias_productos')
 export class SubcategoriaProducto {
   @PrimaryGeneratedColumn()
-  id_subcategoria: number;
+  id_subcategoria!: number;
 
   @Column({ length: 100 })
-  nombre: string;
+  nombre!: string;
 
   @Column({ default: 1 })
-  activa: number;
+  activa!: number;
 
   @ManyToOne(() => CategoriaProducto, categoria => categoria.subcategorias)
   @JoinColumn({ name: 'id_categoria' })
-  categoria: CategoriaProducto;
+  categoria!: CategoriaProducto;
 
   @OneToMany(() => Producto, producto => producto.subcategoria)
-  productos: Producto[];
+  productos!: Producto[];
 }

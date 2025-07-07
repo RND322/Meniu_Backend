@@ -4,23 +4,23 @@ import { Suscripcion } from './suscripcion.entity';
 @Entity('planes')
 export class Plan {
   @PrimaryGeneratedColumn()
-  id_plan: number;
+  id_plan!: number;
 
   @Column({ length: 100 })
-  nombre_plan: string;
+  nombre_plan!: string;
 
   @Column()
-  numero_mesas: number;
+  numero_mesas!: number;
 
   @Column()
-  numero_productos: number;
+  numero_productos!: number;
 
   @Column()
-  numero_cocineros: number;
+  numero_cocineros!: number;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  precio: number;
+  precio!: number;
 
   @OneToMany(() => Suscripcion, suscripcion => suscripcion.plan)
-  suscripciones: Suscripcion[];
+  suscripciones!: Suscripcion[];
 }

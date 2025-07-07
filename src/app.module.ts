@@ -25,6 +25,8 @@ import { Suscripcion } from './common/entities/suscripcion.entity';
 
 // Servicios
 import { ProductosService } from './services/productos.service';
+import { LocalStorageService } from './common/services/local-storage.service';
+//import { AzureBlobStorageService } from './common/services/azure-blob-storage.service';
 
 // Controladores
 import { ProductosController } from './controllers/productos.controller';
@@ -81,6 +83,10 @@ import { ProductosController } from './controllers/productos.controller';
   providers: [
     AppService,
     ProductosService, // Registro del servicio
+    {
+      provide: 'IStorageService',
+      useClass: LocalStorageService,  //AzureBlobStorageService, En caso para Azure
+    },
   ],
 })
 export class AppModule {}

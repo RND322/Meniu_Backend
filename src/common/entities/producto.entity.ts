@@ -6,31 +6,31 @@ import { OrdenItem } from './orden-item.entity';
 @Entity('productos')
 export class Producto {
   @PrimaryGeneratedColumn()
-  id_producto: number;
+  id_producto!: number;
 
   @Column({ length: 100 })
-  nombre: string;
+  nombre!: string;
 
   @Column('text')
-  descripcion: string;
+  descripcion!: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  precio: number;
+  precio!: number;
 
   @Column()
-  imagen_url: string;
+  imagen_url!: string;
 
   @Column({ default: 1 })
-  activo: number;
+  activo!: number;
 
   @ManyToOne(() => Restaurante, restaurante => restaurante.productos)
   @JoinColumn({ name: 'id_restaurante' })
-  restaurante: Restaurante;
+  restaurante!: Restaurante;
 
   @ManyToOne(() => SubcategoriaProducto, subcategoria => subcategoria.productos)
   @JoinColumn({ name: 'id_subcategoria' })
-  subcategoria: SubcategoriaProducto;
+  subcategoria!: SubcategoriaProducto;
 
   @OneToMany(() => OrdenItem, item => item.producto)
-  ordenItems: OrdenItem[];
+  ordenItems!: OrdenItem[];
 }
