@@ -24,7 +24,7 @@ export class ProductosController {
   }
 
   // Endpoint GET :id - Obtener un producto por ID
-  @Get(':id')
+  @Get('obtener/:id')
   @ApiOperation({ summary: 'Obtener un producto por ID' })
   @ApiParam({ name: 'id', type: 'number', description: 'ID del producto' })
   @ApiResponse({

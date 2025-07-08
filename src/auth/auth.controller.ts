@@ -9,20 +9,6 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  /*
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
-  }
-
-  @Post('logout')
-  async logout() {
-    // Opcional: solo devuelve OK, el cierre es del lado del cliente
-    return { message: 'Sesión cerrada exitosamente' };
-  }
-  */
-
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiOperation({ summary: 'Iniciar sesión con nombre de usuario y contraseña' })

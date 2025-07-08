@@ -25,11 +25,16 @@ import { Suscripcion } from './common/entities/suscripcion.entity';
 
 // Servicios
 import { ProductosService } from './services/productos.service';
+import { PersonasService } from './services/personas.service';
+import { UsuariosService } from './services/usuarios.service';
+
 import { LocalStorageService } from './common/services/local-storage.service';
 //import { AzureBlobStorageService } from './common/services/azure-blob-storage.service';
 
 // Controladores
 import { ProductosController } from './controllers/productos.controller';
+import { PersonasController } from './controllers/personas.controller';
+import { UsuariosController } from './controllers/usuarios.controller';
 
 @Module({
   imports: [
@@ -78,11 +83,15 @@ import { ProductosController } from './controllers/productos.controller';
   ],
   controllers: [
     AppController,
-    ProductosController, // Registro del controlador
+    ProductosController,
+    PersonasController,
+    UsuariosController, // Registro del controlador
   ],
   providers: [
     AppService,
-    ProductosService, // Registro del servicio
+    ProductosService,
+    PersonasService,
+    UsuariosService, // Registro del servicio
     {
       provide: 'IStorageService',
       useClass: LocalStorageService,  //AzureBlobStorageService, En caso para Azure
