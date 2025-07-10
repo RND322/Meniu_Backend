@@ -44,7 +44,9 @@
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.2.6",
     "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.3",
     "@types/multer": "^2.0.0",
+    "@types/node": "^24.0.12",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },

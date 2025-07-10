@@ -16,7 +16,7 @@ async function bootstrap() {
   });
 
   // Habilita validación global
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }));
 
   // Configuración de Swagger
   const config = new DocumentBuilder()
@@ -24,11 +24,23 @@ async function bootstrap() {
     .setDescription('API para sistema de pedidos en restaurantes')
     .setVersion('1.0')
     .addTag('productos')
+    .addBearerAuth(
+    {
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'Authorization',
+      in: 'header',
+    },
+    'JWT-auth', // este es el nombre del esquema
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); 
 
   await app.listen(process.env.PORT ?? 3000);
+
+  //console.log('JWT_SECRET:', process.env.JWT_SECRET);
 }
 bootstrap();

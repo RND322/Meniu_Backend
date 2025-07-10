@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuario } from 'src/common/entities/usuario.entity';
@@ -15,7 +15,7 @@ export class UsuariosService {
     @InjectRepository(Persona) private personaRepo: Repository<Persona>,
     @InjectRepository(Email) private emailRepo: Repository<Email>,
     @InjectRepository(Rol) private rolRepo: Repository<Rol>,
-  ) {}
+  ) { }
 
   //Modificar datos de un usuario
   async actualizarUsuario(id: number, dto: UpdateUsuarioDto) {
@@ -51,50 +51,52 @@ export class UsuariosService {
 
     return { message: 'Usuario actualizado correctamente' };
   }
-    //Obtencion detalles de un usuario
-    async obtenerDetalleUsuario(id: number) {
-        const usuario = await this.usuarioRepo.findOne({
-            where: { id_usuario: id },
-            relations: ['rol', 'personas', 'emails'],
-        });
+  //Obtencion detalles de un usuario
+  async obtenerDetalleUsuario(id: number) {
+    const usuario = await this.usuarioRepo.findOne({
+      where: { id_usuario: id },
+      relations: ['rol', 'personas', 'emails'],
+    });
 
-        if (!usuario) {
-            throw new NotFoundException('Usuario no encontrado');
-        }
-
-        const persona = usuario.personas[0];
-        const email = usuario.emails[0];
-
-        return {
-            id_usuario: usuario.id_usuario,
-            nombreUsuario: usuario.nombreUsuario,
-            activo: usuario.activo,
-            nombre: persona?.nombre ?? '',
-            apellidos: persona?.apellidos ?? '',
-            email: email?.email ?? '',
-            rol: usuario.rol?.nombreRol ?? '',
-        };
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
     }
 
-    //Obtiene todos los usuarios
-    async obtenerTodosDetalle() {
-        const usuarios = await this.usuarioRepo.find({
-            relations: ['rol', 'personas', 'emails'],
-        });
+    const persona = usuario.personas[0];
+    const email = usuario.emails[0];
 
-        return usuarios.map((usuario) => {
-            const persona = usuario.personas[0];
-            const email = usuario.emails[0];
+    return {
+      id_usuario: usuario.id_usuario,
+      nombreUsuario: usuario.nombreUsuario,
+      activo: usuario.activo,
+      nombre: persona?.nombre ?? '',
+      apellidos: persona?.apellidos ?? '',
+      email: email?.email ?? '',
+      rol: usuario.rol?.nombreRol ?? '',
+    };
+  }
 
-            return {
-            id_usuario: usuario.id_usuario,
-            nombreUsuario: usuario.nombreUsuario,
-            activo: usuario.activo,
-            nombre: persona?.nombre ?? '',
-            apellidos: persona?.apellidos ?? '',
-            email: email?.email ?? '',
-            rol: usuario.rol?.nombreRol ?? '',
-            };
-        });
+  //Obtiene todos los usuarios de un restaurante
+  async obtenerTodosDetalle(idRestaurante: number) {
+    if (!idRestaurante || idRestaurante <= 0) { // 👈 Validación más estricta
+      throw new UnauthorizedException('ID de restaurante no válido');
     }
+
+    const usuarios = await this.usuarioRepo.find({
+      where: { restaurante: { id_restaurante: idRestaurante } },
+      relations: ['rol', 'personas', 'emails'],
+    });
+  
+    return usuarios.map(usuario => ({
+      id_usuario: usuario.id_usuario,
+      nombreUsuario: usuario.nombreUsuario,
+      activo: usuario.activo,
+      nombre: usuario.personas?.[0]?.nombre ?? '',
+      apellidos: usuario.personas?.[0]?.apellidos ?? '',
+      email: usuario.emails?.[0]?.email ?? '',
+      rol: usuario.rol?.nombreRol ?? '',
+    }));
+  }
+
+
 }

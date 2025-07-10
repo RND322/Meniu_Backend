@@ -35,6 +35,9 @@ import { LocalStorageService } from './common/services/local-storage.service';
 import { ProductosController } from './controllers/productos.controller';
 import { PersonasController } from './controllers/personas.controller';
 import { UsuariosController } from './controllers/usuarios.controller';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -42,6 +45,16 @@ import { UsuariosController } from './controllers/usuarios.controller';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+    }),
+
+
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1h' },
+      }),
     }),
 
     // Módulos externos
@@ -91,11 +104,13 @@ import { UsuariosController } from './controllers/usuarios.controller';
     AppService,
     ProductosService,
     PersonasService,
-    UsuariosService, // Registro del servicio
+    UsuariosService,
+    JwtStrategy, // Registro del servicio
     {
       provide: 'IStorageService',
       useClass: LocalStorageService,  //AzureBlobStorageService, En caso para Azure
     },
   ],
+  exports: [JwtStrategy, PassportModule],
 })
 export class AppModule {}

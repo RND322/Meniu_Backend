@@ -32,8 +32,9 @@ export class Usuario {
   @OneToMany(() => Email, email => email.usuario)
   emails!: Email[];
 
-  @OneToMany(() => Restaurante, restaurante => restaurante.usuario)
-  restaurantes!: Restaurante[];
+  @ManyToOne(() => Restaurante, restaurante => restaurante.usuarios, { nullable: false ,eager: true }) 
+  @JoinColumn({ name: 'id_restaurante' })
+  restaurante!: Restaurante;
 
   @OneToMany(() => MetodoPago, metodoPago => metodoPago.usuario)
   metodosPago!: MetodoPago[];

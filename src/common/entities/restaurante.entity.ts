@@ -34,9 +34,8 @@ export class Restaurante {
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   fechaCreacion!: Date;
 
-  @ManyToOne(() => Usuario, usuario => usuario.restaurantes)
-  @JoinColumn({ name: 'id_usuario' })
-  usuario!: Usuario;
+  @OneToMany(() => Usuario, usuario => usuario.restaurante)
+  usuarios!: Usuario[];
 
   @OneToMany(() => Mesa, mesa => mesa.restaurante)
   mesas!: Mesa[];

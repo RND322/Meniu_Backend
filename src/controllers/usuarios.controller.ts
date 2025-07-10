@@ -1,19 +1,26 @@
-import { Controller, Put, Get, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Put, Get, Param, Body, HttpCode, HttpStatus, UseGuards, Request, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { UpdateUsuarioDto } from 'src/services/dto/update-usuario.dto';
 import { UsuariosService } from 'src/services/usuarios.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
 
 @ApiTags('usuarios')
+@ApiBearerAuth('JWT-auth')
 @Controller('usuarios')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsuariosController {
     constructor(private readonly usuariosService: UsuariosService) { }
 
-    // Endpoint GET: Obtener todos los usuarios
+    // Endpoint GET: Obtener todos los usuarios de un restaurante
     @Get()
-    @ApiOperation({ summary: 'Obtener todos los usuarios con sus datos asociados' })
+    @Roles('Administrador', 'Gerente')
+    @ApiOperation({ summary: 'Obtener todos los usuarios de un restaurante' })
     @ApiResponse({
         status: 200,
-        description: 'Lista de usuarios',
+        description: 'Lista de usuarios del restaurante',
         schema: {
             example: [
                 {
@@ -37,12 +44,18 @@ export class UsuariosController {
             ],
         },
     })
-    async obtenerTodos() {
-        return this.usuariosService.obtenerTodosDetalle();
+    async obtenerTodos(@Request() req) {
+        //console.log('Usuario completo:', req.user);
+        const idRestaurante = req.user?.restaurante_id; // Cambio de clave aquí
+        if (!idRestaurante) {
+            throw new UnauthorizedException('Restaurante no asignado');
+        }
+        return this.usuariosService.obtenerTodosDetalle(idRestaurante); //Envía el ID directamente
     }
 
     // Endpoint PUT: Actualizar datos de un usuario
     @Put('actualizar/:id')
+    @Roles('Administrador', 'Gerente')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Actualizar datos de un usuario excepto nombreUsuario' })
     @ApiParam({ name: 'id', type: 'number' })
@@ -54,6 +67,7 @@ export class UsuariosController {
 
     // Endpoint GET: Obtener datos de un usuario
     @Get('obtener/:id')
+    @Roles('Administrador', 'Gerente')
     @ApiOperation({ summary: 'Obtener datos detallados de un usuario por ID' })
     @ApiParam({ name: 'id', type: 'number' })
     @ApiResponse({
