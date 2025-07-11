@@ -1,4 +1,3 @@
-
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpStatus, UseInterceptors, UploadedFile, UseGuards, Req, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthRequest } from 'src/common/interfaces/auth-request.interface';
@@ -17,7 +16,8 @@ import { Request } from 'express';
 @Controller('productos')
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) { }
-
+  
+  /*
   // Endpoint GET: Obtener todos los productos
   @Get()
   @ApiOperation({ summary: 'Obtener todos los productos' })
@@ -29,6 +29,30 @@ export class ProductosController {
   async findAll(): Promise<Producto[]> {
     return this.productosService.findAll();
   }
+*/
+
+  // Endpoint GET: Obtener todos los productos de un restaurante
+  @Get('restaurante/:id')
+  @ApiOperation({ summary: 'Obtener productos por ID de restaurante' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del restaurante',
+    type: Number,
+    example: 1
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Lista de productos del restaurante',
+    type: [Producto],
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Restaurante no encontrado'
+  })
+  async findByRestaurante(@Param('id') restauranteId: number): Promise<Producto[]> {
+    return this.productosService.findByRestaurante(restauranteId);
+  }
+
 
   // Endpoint GET :id - Obtener un producto por ID
   @Get('obtener/:id')

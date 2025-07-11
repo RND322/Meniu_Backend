@@ -9,10 +9,10 @@ export class Suscripcion {
   id_suscripcion!: number;
 
   @Column({ type: 'date' })
-  fecha_inicio!: string;
+  fecha_inicio!: Date;
 
   @Column({ type: 'date' })
-  fecha_cobro!: string;
+  fecha_cobro!: Date;
 
   @Column({ default: 1 })
   activa!: number;

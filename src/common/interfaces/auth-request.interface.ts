@@ -10,6 +10,5 @@ export interface AuthRequest extends Request {
     email: string;
     restaurante_id: number;
     restaurante_nombre: string;
-    // …otros campos que pongas en el payload
   };
 }
