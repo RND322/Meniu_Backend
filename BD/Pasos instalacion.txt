@@ -1,0 +1,41 @@
+1. Descargar el repositorio
+2. En la carpeta del proyecto abren una terminal y ejecutan npm install
+3. Luego ejecutan npm run build
+4. Luego ejecutan npm run start:dev, o npm run start (este aveces les da error y solo se ejecuta en Superusuario)
+
+*Si les da un error borrran el archivo tsconfig.build.tsbuildinfo y corren desde el paso 3
+
+*Otro posible error es que les diga que les falta alguna dependencia con npm ls ven las dependencias
+se deberian ver asi:
+
+├── @nestjs/cli@10.4.9
+├── @nestjs/common@10.4.19
+├── @nestjs/config@4.0.2
+├── @nestjs/core@10.4.19
+├── @nestjs/passport@11.0.5
+├── @nestjs/platform-express@10.4.19
+├── @nestjs/schematics@10.2.3
+├── @nestjs/swagger@7.0.7
+├── @nestjs/testing@10.4.19
+├── @nestjs/typeorm@10.0.2
+├── @types/bcrypt@5.0.2
+├── @types/express@5.0.3
+├── @types/multer@2.0.0
+├── @types/node@24.0.12
+├── bcrypt@6.0.0
+├── class-transformer@0.5.1
+├── class-validator@0.14.2
+├── jsonwebtoken@9.0.2
+├── multer@2.0.1
+├── passport-jwt@4.0.1
+├── passport@0.7.0
+├── reflect-metadata@0.1.14
+├── rxjs@7.8.2
+├── swagger-ui-express@5.0.1
+├── ts-node@10.9.2
+├── typeorm@0.3.25
+└── typescript@5.8.3
+
+
+*Cualquier otro error le preguntan a la IA
+
