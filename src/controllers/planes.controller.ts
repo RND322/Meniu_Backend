@@ -4,12 +4,12 @@ import { Plan } from '../common/entities/plan.entity';
 import { PlanesService } from '../services/planes.service';
 
 @ApiTags('planes')
-@Controller('planes-todos')
+@Controller('planes')
 export class PlanesController {
     constructor(private readonly planesService: PlanesService) { }
 
     // Endpoint GET: Obtener todos los planes
-    @Get()
+    @Get('todos')
     @ApiOperation({ summary: 'Obtener todos los planes disponibles' })
     @ApiResponse({
         status: HttpStatus.OK,

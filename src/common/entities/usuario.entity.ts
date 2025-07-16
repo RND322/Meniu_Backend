@@ -3,14 +3,14 @@ import { Rol } from './rol.entity';
 import { Persona } from './persona.entity';
 import { Email } from './email.entity';
 import { Restaurante } from './restaurante.entity';
-import { MetodoPago } from './metodo-pago.entity'; 
+import { MetodoPago } from './metodo-pago.entity';
 
 @Entity('usuarios')
 export class Usuario {
   @PrimaryGeneratedColumn()
   id_usuario!: number;
 
-  @Column({ name: 'nombre_usuario',  length: 100 })
+  @Column({ name: 'nombre_usuario', length: 100 })
   nombreUsuario!: string;
 
   @Column({ length: 100 })
@@ -32,7 +32,7 @@ export class Usuario {
   @OneToMany(() => Email, email => email.usuario)
   emails!: Email[];
 
-  @ManyToOne(() => Restaurante, restaurante => restaurante.usuarios, { nullable: false ,eager: true }) 
+  @ManyToOne(() => Restaurante, restaurante => restaurante.usuarios, { nullable: false, eager: true })
   @JoinColumn({ name: 'id_restaurante' })
   restaurante!: Restaurante;
 

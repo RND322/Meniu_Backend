@@ -35,6 +35,9 @@ export class Orden {
   @Column({ default: false })
   solicitud_pago!: boolean;
 
+  @Column({ nullable: true })
+  notas!: string;
+
   @ManyToOne(() => Restaurante, restaurante => restaurante.ordenes)
   @JoinColumn({ name: 'id_restaurante' })
   restaurante!: Restaurante;

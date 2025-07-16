@@ -8,7 +8,7 @@ export class PlanesService {
   constructor(
     @InjectRepository(Plan)
     private readonly planRepository: Repository<Plan>,
-  ) {}
+  ) { }
 
   //Obtener todos lo planes
   async obtenerTodosLosPlanes(): Promise<Plan[]> {

@@ -7,8 +7,9 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
+  //Endpoint POST: Login
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiOperation({ summary: 'Iniciar sesión con nombre de usuario y contraseña' })
@@ -38,6 +39,7 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  //Endpoint POST: Logout (solo es demostracion como tal)
   @Post('logout')
   @ApiOperation({ summary: 'Cerrar sesión' })
   @ApiResponse({

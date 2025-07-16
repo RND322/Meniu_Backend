@@ -17,7 +17,6 @@ export class CreateProductoDto {
   @Min(0.01, { message: 'El precio debe ser mayor que 0' })
   precio!: number;
 
-  // Lo vamos a setear desde el JWT, no lo envía el cliente
   @IsOptional()
   @Type(() => Number)
   @IsNumber()

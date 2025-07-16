@@ -86,7 +86,7 @@ export class UsuariosService {
       where: { restaurante: { id_restaurante: idRestaurante } },
       relations: ['rol', 'personas', 'emails'],
     });
-  
+
     return usuarios.map(usuario => ({
       id_usuario: usuario.id_usuario,
       nombreUsuario: usuario.nombreUsuario,

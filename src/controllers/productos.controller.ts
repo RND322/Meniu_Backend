@@ -12,11 +12,10 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Request } from 'express';
 
 @ApiTags('productos')
-@ApiBearerAuth('JWT-auth')
 @Controller('productos')
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) { }
-  
+
   /*
   // Endpoint GET: Obtener todos los productos
   @Get()
@@ -29,55 +28,98 @@ export class ProductosController {
   async findAll(): Promise<Producto[]> {
     return this.productosService.findAll();
   }
-*/
+  */
 
-  // Endpoint GET: Obtener todos los productos de un restaurante
-  @Get('restaurante/:id')
-  @ApiOperation({ summary: 'Obtener productos por ID de restaurante' })
-  @ApiParam({
-    name: 'id',
-    description: 'ID del restaurante',
-    type: Number,
-    example: 1
-  })
+  // Endpoint GET :id - Obtener productos de un restaurante uso para Gerentes y Administradores
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Gerente', 'Administrador')
+  @Get('restaurante/obtener-gestion')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Todos los productos (Gestión) - Uso para Gerente, Administrador' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Lista de productos del restaurante',
+    description: 'Lista completa de productos del restaurante',
     type: [Producto],
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Restaurante no encontrado'
-  })
-  async findByRestaurante(@Param('id') restauranteId: number): Promise<Producto[]> {
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Sin permiso o token inválido' })
+  async findAllByRestauranteAdmin(
+    @Req() req: AuthRequest,
+  ): Promise<Producto[]> {
+    return this.productosService.findAllByRestauranteAdmin(
+      req.user.restaurante_id,
+    );
+  }
+
+  // Endpoint GET :id - Obtener productos de un restaurante
+  @Get('restaurante/:id')
+  @ApiOperation({ summary: 'Productos activos por restaurante' })
+  @ApiParam({ name: 'id', type: Number, example: 1 })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Productos activos', type: [Producto] })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Restaurante no encontrado' })
+  async findByRestaurante(
+    @Param('id') restauranteId: number,
+  ): Promise<Producto[]> {
     return this.productosService.findByRestaurante(restauranteId);
   }
 
-
-  // Endpoint GET :id - Obtener un producto por ID
+  // Endpoint GET :id - Obtener un producto por ID que esten activos
   @Get('obtener/:id')
-  @ApiOperation({ summary: 'Obtener un producto por ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'ID del producto' })
+  @ApiOperation({ summary: 'Obtener producto activo por ID' })
+  @ApiParam({ name: 'id', type: Number, example: 3 })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Producto encontrado',
+    description: 'Producto activo encontrado',
     type: Producto,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Producto no encontrado',
+    description: 'Producto no encontrado o no activo',
   })
-  async findOne(@Param('id') id: number): Promise<Producto> {
-    return this.productosService.findOne(id);
+  async findOneActive(
+    @Param('id') id: number,
+  ): Promise<Producto> {
+    return this.productosService.findOneActive(id);
+  }
+
+  // Endpoint GET :id - Obtener un producto por ID uso para Gerentes y Administradores.
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Gerente', 'Administrador')
+  @Get('obtener/gestion/:id')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary:
+      'Obtener producto por ID (Gestion) - Uso para Gerente, Administrador',
+  })
+  @ApiParam({ name: 'id', type: Number, example: 3 })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Producto encontrado en tu restaurante',
+    type: Producto,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Token inválido o sin permisos',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Producto no existe o no pertenece a tu restaurante',
+  })
+  async findOneByIdAdmin(
+    @Param('id') id: number,
+    @Req() req: AuthRequest,
+  ): Promise<Producto> {
+    const restauranteId = req.user.restaurante_id;
+    return this.productosService.findOneByIdAdmin(id, restauranteId);
   }
 
   // Endpoint POST - Crear un producto con imagen
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Administrador', 'Gerente')
   @Post('crear-producto')
+  @ApiBearerAuth('JWT-auth')
   @UseInterceptors(FileInterceptor('imagen'))
   @ApiOperation({
-    summary: 'Crear un nuevo producto con imagen',
+    summary: 'Crear un nuevo producto con imagen (Gestion) - Uso para Gerente, Administrador',
     description: `⚠️ Importante: Solo para uso rol Gerente o Administrador.
                  Swagger autocompleta todos los campos con valores de ejemplo. 
                  Si solo deseas modificar uno, borra los demás antes de enviar.` })
@@ -130,9 +172,10 @@ export class ProductosController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Administrador', 'Gerente')
   @Put('actualizar/:id')
+  @ApiBearerAuth('JWT-auth')
   @UseInterceptors(FileInterceptor('imagen'))
   @ApiOperation({
-    summary: 'Actualizar un producto por ID (excepto el restaurante)',
+    summary: 'Actualizar un producto por ID (Gestion) - Uso para Gerente, Administrador',
     description: `⚠️ Importante: Solo para uso rol Gerente o Administrador.
                   Swagger autocompleta todos los campos con valores de ejemplo. 
                   Si solo deseas modificar uno, borra los demás antes de enviar.` })

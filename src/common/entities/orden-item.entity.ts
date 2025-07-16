@@ -13,9 +13,6 @@ export class OrdenItem {
   @Column('decimal', { precision: 10, scale: 2 })
   precio_unitario!: number;
 
-  @Column({ nullable: true })
-  notas!: string;
-
   @ManyToOne(() => Orden, orden => orden.items)
   @JoinColumn({ name: 'id_orden' })
   orden!: Orden;

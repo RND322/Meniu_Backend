@@ -6,14 +6,15 @@ import { CreatePersonaDto } from 'src/services/dto/create-persona.dto';
 @ApiTags('personas')
 @Controller('personas')
 export class PersonasController {
-  constructor(private readonly personasService: PersonasService) {}
+  constructor(private readonly personasService: PersonasService) { }
 
   // Endpoint POST: Registrar a las personas
   @Post('registrar')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Registrar una persona con usuario, rol y email',
-    description: "Crea un usuario con nombre de usuario, contraseña y lo enlaza con una persona y email." })
+    description: "Crea un usuario con nombre de usuario, contraseña y lo enlaza con una persona y email."
+  })
   @ApiBody({ type: CreatePersonaDto })
   @ApiResponse({
     status: 201,

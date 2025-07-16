@@ -14,6 +14,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) { }
 
+  //Login
   async login(loginDto: LoginDto): Promise<{
     access_token: string;
   }> {
@@ -47,7 +48,7 @@ export class AuthService {
       nombre: persona?.nombre ?? '',
       apellidos: persona?.apellidos ?? '',
       email: email?.email ?? '',
-      restaurante_id: usuario.restaurante.id_restaurante, // 👈 Ahora seguro que existe
+      restaurante_id: usuario.restaurante.id_restaurante,
       restaurante_nombre: usuario.restaurante.nombre,
     };
 

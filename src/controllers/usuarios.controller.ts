@@ -15,9 +15,9 @@ export class UsuariosController {
     constructor(private readonly usuariosService: UsuariosService) { }
 
     // Endpoint GET: Obtener todos los usuarios de un restaurante
-    @Get()
+    @Get('todos')
     @Roles('Administrador', 'Gerente')
-    @ApiOperation({ summary: 'Obtener todos los usuarios de un restaurante' })
+    @ApiOperation({ summary: 'Obtener todos los usuarios de un restaurante (Gestion) - Uso para Gerente, Administrador' })
     @ApiResponse({
         status: 200,
         description: 'Lista de usuarios del restaurante',
@@ -57,7 +57,7 @@ export class UsuariosController {
     @Put('actualizar/:id')
     @Roles('Administrador', 'Gerente')
     @HttpCode(HttpStatus.OK)
-    @ApiOperation({ summary: 'Actualizar datos de un usuario excepto nombreUsuario' })
+    @ApiOperation({ summary: 'Actualizar datos de un usuario (Gestion) - Uso para Gerente, Administrador' })
     @ApiParam({ name: 'id', type: 'number' })
     @ApiBody({ type: UpdateUsuarioDto })
     @ApiResponse({ status: 200, description: 'Usuario actualizado correctamente' })
@@ -68,7 +68,7 @@ export class UsuariosController {
     // Endpoint GET: Obtener datos de un usuario
     @Get('obtener/:id')
     @Roles('Administrador', 'Gerente')
-    @ApiOperation({ summary: 'Obtener datos detallados de un usuario por ID' })
+    @ApiOperation({ summary: 'Obtener datos detallados de un usuario por ID (Gestion) - Uso para Gerente, Administrador' })
     @ApiParam({ name: 'id', type: 'number' })
     @ApiResponse({
         status: 200,

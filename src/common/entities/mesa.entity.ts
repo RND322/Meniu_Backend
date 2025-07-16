@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Restaurante } from './restaurante.entity';
-import { Orden } from './orden.entity'; 
+import { Orden } from './orden.entity';
 
 @Entity('mesas')
 export class Mesa {

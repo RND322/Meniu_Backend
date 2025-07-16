@@ -105,6 +105,7 @@ CREATE TABLE ordenes (
     impuestos DECIMAL(10,2),
     total DECIMAL(10,2),
     solicitud_pago TINYINT(1) DEFAULT 0,
+    notas TEXT,
     FOREIGN KEY (id_restaurante) REFERENCES restaurantes(id_restaurante),
     FOREIGN KEY (id_mesa) REFERENCES mesas(id_mesa)
 );
@@ -116,7 +117,6 @@ CREATE TABLE orden_items (
     id_producto INT,
     cantidad INT,
     precio_unitario DECIMAL(10,2),
-    notas TEXT,
     FOREIGN KEY (id_orden) REFERENCES ordenes(id_orden),
     FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
 );

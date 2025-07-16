@@ -35,6 +35,8 @@ export class RegisterService {
         @Inject('IStorageService')
         private storageService: IStorageService,
     ) { }
+
+    //Registro de una persona con su restaurante
     async completeRegistration(registerDto: RegisterDto, logo?: Express.Multer.File) {
         const queryRunner = this.restauranteRepository.manager.connection.createQueryRunner();
         await queryRunner.connect();
@@ -130,8 +132,8 @@ export class RegisterService {
                 restaurante: restaurante,
                 metodoPago: metodoPago,
                 plan: plan,
-                fecha_inicio: fechaInicio,  
-                fecha_cobro: fechaCobro,    
+                fecha_inicio: fechaInicio,
+                fecha_cobro: fechaCobro,
                 activa: 1
             });
             await queryRunner.manager.save(suscripcion);

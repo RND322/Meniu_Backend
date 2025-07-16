@@ -20,7 +20,7 @@ export class MesasController {
   @Post('crear-mesa')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Administrador', 'Gerente')
-  @ApiOperation({ summary: 'Crear nueva mesa para el restaurante del usuario' })
+  @ApiOperation({ summary: 'Crear nueva mesa para el restaurante (Gestion) - Uso para Gerentes/Administradores' })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('qr_image'))
   @ApiBody({
@@ -87,10 +87,10 @@ export class MesasController {
   }
 
   // Endpoint PUT: Actualizar detalles de una mesa
-  @Put(':id')
+  @Put('actualizar/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Administrador', 'Gerente')
-  @ApiOperation({ summary: 'Actualizar una mesa' })
+  @ApiOperation({ summary: 'Actualizar una mesa (Gestion) - Uso para Gerentes/Administradores' })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('qr_image'))
   @ApiBody({
@@ -165,7 +165,7 @@ export class MesasController {
   @Get('restaurante-mesas')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Administrador', 'Gerente')
-  @ApiOperation({ summary: 'Obtener todas las mesas del restaurante del usuario' })
+  @ApiOperation({ summary: 'Obtener todas las mesas del restaurante (Gestion) - Uso para Gerentes/Administradores' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Listado de mesas del restaurante',

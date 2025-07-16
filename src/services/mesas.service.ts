@@ -65,7 +65,7 @@ export class MesasService {
             relations: ['restaurante']
         });
     }
-    
+
     //Atualizar los datos de una mesa
     async actualizarMesa(idMesa: number, datos: Partial<Mesa>): Promise<Mesa> {
         await this.mesaRepository.update(idMesa, datos);

@@ -41,7 +41,7 @@ export class PersonasService {
       nombreUsuario,
       password: hashedPassword,
       rol,
-      restaurante, // 👈 se asigna aquí
+      restaurante,
       activo: 1,
     });
     const usuarioGuardado = await this.usuarioRepo.save(nuevoUsuario);

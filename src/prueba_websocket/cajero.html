@@ -1,0 +1,35 @@
+<!-- cajero.html -->
+<!DOCTYPE html><html><body>
+  <h1>💰 Panel Caja</h1>
+  <ul id="lista"></ul>
+
+  <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"></script>
+  <script>
+    const RESTAURANTE_ID = 1;
+    const socket = io('http://localhost:3000', {
+      query: { role: 'cajero', restauranteId: RESTAURANTE_ID },
+    });
+
+    const lista = document.getElementById('lista');
+
+    socket.on('joined', room => console.log(`✅ Unido a sala ${room}`));
+    socket.on('nueva_orden', orden => {
+      console.log('💸 Nueva orden en caja:', orden);
+
+      // Crea un elemento <li> con los detalles básicos
+      const li = document.createElement('li');
+      li.textContent = `Orden ${orden.id_orden} — Mesa ${orden.mesa.numero_mesa} — Total: $${orden.total}`;
+      lista.appendChild(li);
+
+      // (Opcional) Botón para “marcar como cobrado”
+      const btn = document.createElement('button');
+      btn.textContent = 'Cobrar';
+      btn.onclick = () => {
+        // aquí podrías llamar a un endpoint de “confirmar cobro”
+        btn.disabled = true;
+        li.style.opacity = '0.5';
+      };
+      li.appendChild(btn);
+    });
+  </script>
+</body></html>
