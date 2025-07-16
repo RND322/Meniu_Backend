@@ -16,3 +16,22 @@ Ese token lo copian y se van al candado de la api o al authorize que esta hasta 
 3. Listo ya deberian poder usar los endpoints que tienen seguridad
 
 ** Todos los endpoints verifican que los que pidan coincidan con el restaurante del usuario que lo solicita.
+
+//
+.env
+
+DB_TYPE=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_USERNAME=root
+DB_PASSWORD=password123
+DB_NAME=sistema_meniu
+DB_SYNCHRONIZE=true
+
+JWT_SECRET=super_secret_jwt_key
+
+AZURE_STORAGE_CONNECTION_STRING=...tu_connection_string...
+AZURE_CONTAINER_NAME=platillos
+NODE_ENV=production
+
+//
