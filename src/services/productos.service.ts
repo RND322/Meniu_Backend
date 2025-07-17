@@ -8,6 +8,8 @@ import { UpdateProductoDto } from './dto/update-producto.dto';
 import { IStorageService } from '../common/interfaces/storage.interface';
 import { LocalStorageService } from '../common/services/local-storage.service';
 import { Restaurante } from 'src/common/entities/restaurante.entity';
+import { UpdateProductoTextDto } from './dto/update-producto-text.dto';
+import { CreateProductoTextDto } from './dto/create-producto-text.dto';
 
 
 @Injectable()
@@ -185,4 +187,47 @@ export class ProductosService {
     return this.productoRepository.save(producto);
   }
 
+  /*MODIFICACION DE CIERTOS METODOS */
+  
+  //Creacion producto con imagen como texto
+  async createWithImageText(
+    dto: CreateProductoTextDto,
+    restauranteId: number,
+  ): Promise<Producto> {
+    const newP = this.productoRepository.create({
+      nombre: dto.nombre,
+      descripcion: dto.descripcion,
+      precio: dto.precio,
+      activo: dto.activo ?? 1,
+      imagen_url: dto.imagen,
+      restaurante: { id_restaurante: restauranteId },
+      subcategoria: { id_subcategoria: dto.id_subcategoria },
+    });
+    return this.productoRepository.save(newP);
+  }
+
+  //Actualizacion producto imagen como texto
+  async updateWithImageText(
+    id: number,
+    dto: UpdateProductoTextDto,
+    restauranteId: number,
+  ): Promise<Producto> {
+    const p = await this.productoRepository.findOne({
+      where: { id_producto: id },
+      relations: ['restaurante', 'subcategoria'],
+    });
+    if (!p) throw new NotFoundException('Producto no encontrado');
+    if (p.restaurante.id_restaurante !== restauranteId)
+      throw new UnauthorizedException('No es tu restaurante');
+
+    if (dto.nombre) p.nombre = dto.nombre;
+    if (dto.descripcion) p.descripcion = dto.descripcion;
+    if (dto.precio !== undefined) p.precio = dto.precio;
+    if (dto.activo !== undefined) p.activo = dto.activo;
+    if (dto.id_subcategoria)
+      p.subcategoria = { id_subcategoria: dto.id_subcategoria } as any;
+    if (dto.imagen) p.imagen_url = dto.imagen;
+
+    return this.productoRepository.save(p);
+  }
 }

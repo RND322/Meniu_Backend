@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpStatus, UseInterceptors, UploadedFile, UseGuards, Req, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpStatus, UseInterceptors, UploadedFile, UseGuards, Req, BadRequestException, HttpCode } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthRequest } from 'src/common/interfaces/auth-request.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -10,6 +10,8 @@ import { Roles } from 'src/auth/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Request } from 'express';
+import { UpdateProductoTextDto } from 'src/services/dto/update-producto-text.dto';
+import { CreateProductoTextDto } from 'src/services/dto/create-producto-text.dto';
 
 @ApiTags('productos')
 @Controller('productos')
@@ -123,7 +125,6 @@ export class ProductosController {
     description: `⚠️ Importante: Solo para uso rol Gerente o Administrador.
                  Swagger autocompleta todos los campos con valores de ejemplo. 
                  Si solo deseas modificar uno, borra los demás antes de enviar.` })
-  @ApiParam({ name: 'id', type: 'number' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -212,6 +213,50 @@ export class ProductosController {
       file,
       req.user.restaurante_id,
     );
+  } 
+
+  /*MODIFICACION DE CIERTOS METODOS */
+
+  //Endpoint POST - Crear un producto con link o texto como imagen
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Gerente', 'Administrador')
+  @ApiBearerAuth('JWT-auth')
+  @Post('crear-producto-ln')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Crear producto con imagen como link o texto (Gestion) - Uso para Gerente, Administrador',
+    description: 'Este endpoint permite crear un producto con texto en el campo imagen, todos los campos son obligatorios',
+  })
+  @ApiBody({ type: CreateProductoTextDto })
+  @ApiResponse({ status: 201, description: 'Producto creado', type: Producto })
+  async createText(
+    @Body() dto: CreateProductoTextDto,
+    @Req() req: AuthRequest,
+  ): Promise<Producto> {
+    return this.productosService.createWithImageText(dto, req.user.restaurante_id);
   }
 
+  //Endpoint PUT - Modificar un producto con link o texto como imagen
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Gerente', 'Administrador')
+  @ApiBearerAuth('JWT-auth')
+  @Put('actualizar-productoln/:id')
+  @ApiParam({ name: 'id', type: Number })
+  @ApiOperation({
+    summary: 'Actualizar producto con imagen como link o texto (Gestion) - Uso para Gerente, Administrador',
+    description: 'Este endpoint permite modificar un producto con texto en el campo imagen, todos los campos son opcionales',
+  })
+  @ApiBody({ type: UpdateProductoTextDto })
+  @ApiResponse({ status: 200, description: 'Producto actualizado', type: Producto })
+  async updateText(
+    @Param('id') id: number,
+    @Body() dto: UpdateProductoTextDto,
+    @Req() req: AuthRequest,
+  ): Promise<Producto> {
+    return this.productosService.updateWithImageText(
+      id,
+      dto,
+      req.user.restaurante_id,
+    );
+  }
 }

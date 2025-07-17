@@ -9,6 +9,8 @@ import { MesasService } from '../services/mesas.service';
 import { CreateMesaDto } from '../services/dto/create-mesa.dto';
 import { AuthRequest } from '../common/interfaces/auth-request.interface';
 import { UpdateMesaDto } from 'src/services/dto/update-mesa.dto';
+import { UpdateMesaTextDto } from 'src/services/dto/update-mesa-text.dto';
+import { CreateMesaTextDto } from 'src/services/dto/create-mesa-text.dto';
 
 @ApiTags('mesas')
 @ApiBearerAuth('JWT-auth')
@@ -180,5 +182,58 @@ export class MesasController {
   ): Promise<Mesa[]> {
     const restauranteId = req.user.restaurante_id;
     return this.mesasService.obtenerMesasPorRestaurante(restauranteId);
+  }
+
+  /*MODIFICACION DE METODOS */
+
+  // Endpoint POST: Crear una mesa con texto o link como imagen
+  @Post('crear-mesa-ln')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Administrador', 'Gerente')
+  @ApiOperation({
+    summary: 'Crear mesa con el campo imagen como texto o link (Gestion) - Uso para Gerente, Administrador',
+    description: 'Este endpoint permite crear una mesa con texto en el campo imagen, todos los campos son obligatorios',
+  })
+  @ApiBody({ type: CreateMesaTextDto })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Mesa creada',
+    type: Mesa,
+  })
+  async crearMesaText(
+    @Req() req: AuthRequest,
+    @Body() dto: CreateMesaTextDto,
+  ): Promise<Mesa> {
+    return this.mesasService.crearMesaText({
+      ...dto,
+      id_restaurante: req.user.restaurante_id,
+    });
+  }
+
+  // Endpoint PUT: Modificar una mesa con texto o link como imagen
+  @Put('actualizar-mesa-ln/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Administrador', 'Gerente')
+  @ApiOperation({
+    summary: 'Crear mesa con el campo imagen como texto o link (Gestion) - Uso para Gerente, Administrador',
+    description: 'Este endpoint permite modificar una mesa con texto en el campo imagen, todos los campos son opcionales',
+  })
+  @ApiParam({ name: 'id', example: 5, description: 'ID de la mesa' })
+  @ApiBody({ type: UpdateMesaTextDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Mesa actualizada',
+    type: Mesa,
+  })
+  async actualizarMesaText(
+    @Param('id') id: number,
+    @Req() req: AuthRequest,
+    @Body() dto: UpdateMesaTextDto,
+  ): Promise<Mesa> {
+    return this.mesasService.actualizarMesaText(
+      id,
+      dto,
+      req.user.restaurante_id,
+    );
   }
 }

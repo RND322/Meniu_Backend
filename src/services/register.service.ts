@@ -12,6 +12,7 @@ import { Suscripcion } from 'src/common/entities/suscripcion.entity';
 import { Rol } from 'src/common/entities/rol.entity';
 import { RegisterDto } from './dto/register.dto';
 import { IStorageService } from '../common/interfaces/storage.interface';
+import { RegisterTextDto } from './dto/register-text.dto';
 
 @Injectable()
 export class RegisterService {
@@ -153,6 +154,113 @@ export class RegisterService {
             throw new BadRequestException(
                 error instanceof Error ? error.message : 'Error en el registro'
             );
+        } finally {
+            await queryRunner.release();
+        }
+    }
+
+    /*MODIFICACION DE METODOS */
+
+    //Registrar a un cliente con el logo como texto o link
+    async completeRegistrationText(dto: RegisterTextDto) {
+        const queryRunner = this.restauranteRepository.manager.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            // Verificar plan
+            const plan = await queryRunner.manager.findOne(Plan, {
+                where: { id_plan: dto.id_plan },
+            });
+            if (!plan) throw new BadRequestException('El plan seleccionado no existe');
+
+            // Logo: directo de dto.logoUrl
+            const logoUrl = dto.logoUrl ?? '';
+
+            // Crear restaurante
+            const restaurante = this.restauranteRepository.create({
+                nombre: dto.nombre_restaurante,
+                email: dto.email_restaurante,
+                direccion: dto.direccion,
+                telefono: dto.telefono,
+                logo_url: logoUrl,
+                descripcion: dto.descripcion,
+                activo: 1,
+            });
+            await queryRunner.manager.save(restaurante);
+
+            // Buscar rol Gerente
+            const rolGerente = await queryRunner.manager.findOne(Rol, {
+                where: { nombreRol: 'Gerente' },
+            });
+            if (!rolGerente) throw new Error('Rol de Gerente no configurado');
+
+            // Crear usuario
+            const hashed = await bcrypt.hash(dto.password, 10);
+            const usuario = this.usuarioRepository.create({
+                rol: rolGerente,
+                restaurante: restaurante,
+                nombreUsuario: dto.email.split('@')[0],
+                password: hashed,
+                activo: 1,
+            });
+            await queryRunner.manager.save(usuario);
+
+            // Persona y Email
+            await queryRunner.manager.save(
+                this.personaRepository.create({
+                    usuario,
+                    nombre: dto.nombre,
+                    apellidos: dto.apellidos,
+                }),
+            );
+            await queryRunner.manager.save(
+                this.emailRepository.create({
+                    usuario,
+                    email: dto.email,
+                }),
+            );
+
+            // Método de pago y suscripción
+            const metodoPago = this.metodoPagoRepository.create({
+                usuario,
+                nombre_propietario: dto.nombre_propietario_tarjeta,
+                numero_tarjeta: dto.numero_tarjeta,
+                cvv: dto.cvv,
+                mes_expiracion: dto.mes_expiracion,
+                anio_expiracion: dto.anio_expiracion,
+                activo: 1,
+            });
+            await queryRunner.manager.save(metodoPago);
+
+            const fechaInicio = new Date();
+            const fechaCobro = new Date(fechaInicio);
+            fechaCobro.setDate(fechaCobro.getDate() + 30);
+
+            await queryRunner.manager.save(
+                this.suscripcionRepository.create({
+                    restaurante,
+                    metodoPago,
+                    plan,
+                    fecha_inicio: fechaInicio,
+                    fecha_cobro: fechaCobro,
+                    activa: 1,
+                }),
+            );
+
+            await queryRunner.commitTransaction();
+
+            return {
+                success: true,
+                message: 'Registro completado exitosamente',
+                data: {
+                    restauranteId: restaurante.id_restaurante,
+                    usuarioId: usuario.id_usuario,
+                },
+            };
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw new BadRequestException(err instanceof Error ? err.message : 'Error en el registro');
         } finally {
             await queryRunner.release();
         }

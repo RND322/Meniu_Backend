@@ -39,6 +39,14 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
+  // Habilita CORS para todos los dominios 
+  app.enableCors({
+    origin: '*',               // o un array ['https://mi-frontend.com']
+    methods: 'GET,HEAD,PUT,POST,DELETE,OPTIONS',
+    credentials: true,         // si se usan cookies o credenciales
+    allowedHeaders: '*',       // o lista concreta
+  });
+
   await app.listen(process.env.PORT ?? 3000);
 
   //console.log('JWT_SECRET:', process.env.JWT_SECRET);

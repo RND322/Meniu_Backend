@@ -1,8 +1,10 @@
-import { Injectable, BadRequestException, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, Inject, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Mesa } from '../common/entities/mesa.entity';
 import { IStorageService } from '../common/interfaces/storage.interface';
+import { UpdateMesaTextDto } from './dto/update-mesa-text.dto';
+import { CreateMesaTextDto } from './dto/create-mesa-text.dto';
 
 @Injectable()
 export class MesasService {
@@ -89,5 +91,61 @@ export class MesasService {
                 qr_code: true,
             },
         });
+    }
+
+    /*MODIFICACION DE METODOS */
+
+    //Creacion de mesa con texto como imagen
+    async crearMesaText(
+        dto: CreateMesaTextDto & { id_restaurante: number },
+    ): Promise<Mesa> {
+        //Verificar número único:
+        const existe = await this.verificarMesaExistente(dto.numero_mesa, dto.id_restaurante);
+        if (existe) {
+            throw new BadRequestException(`La mesa ${dto.numero_mesa} ya existe`);
+        }
+
+        //Delegar a crearMesa (que monta la entidad)
+        return this.crearMesa({
+            numero_mesa: dto.numero_mesa,
+            estado_mesa: dto.estado_mesa,
+            qr_code: dto.qr_code,
+            id_restaurante: dto.id_restaurante,
+        });
+    }
+
+    //Actualizacion de mesa con texto como imagen
+    async actualizarMesaText(
+        idMesa: number,
+        dto: UpdateMesaTextDto,
+        restauranteId: number,
+    ): Promise<Mesa> {
+        //Obtener y validar pertenencia
+        const mesa = await this.obtenerMesaConRestaurante(idMesa);
+        if (!mesa) {
+            throw new NotFoundException(`Mesa ${idMesa} no encontrada`);
+        }
+        if (mesa.restaurante.id_restaurante !== restauranteId) {
+            throw new ForbiddenException('No tienes permisos sobre esta mesa');
+        }
+
+        //Preparar datos a actualizar
+        const datos: Partial<Mesa> = {};
+        if (dto.numero_mesa != null && dto.numero_mesa !== mesa.numero_mesa) {
+            const dup = await this.verificarMesaExistente(dto.numero_mesa, restauranteId);
+            if (dup) {
+                throw new BadRequestException(`La mesa ${dto.numero_mesa} ya existe`);
+            }
+            datos.numero_mesa = dto.numero_mesa;
+        }
+        if (dto.estado_mesa != null) {
+            datos.estado_mesa = dto.estado_mesa;
+        }
+        if (dto.qr_code != null) {
+            datos.qr_code = dto.qr_code;
+        }
+
+        //Delegar a tu método genérico de update
+        return this.actualizarMesa(idMesa, datos);
     }
 }

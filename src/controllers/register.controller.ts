@@ -3,6 +3,7 @@ import { ApiOperation, ApiResponse, ApiTags, ApiConsumes, ApiBody } from '@nestj
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RegisterDto } from 'src/services/dto/register.dto';
 import { RegisterService } from 'src/services/register.service';
+import { RegisterTextDto } from 'src/services/dto/register-text.dto';
 
 @ApiTags('registro-clientes')
 @Controller('registro-clientes')
@@ -82,5 +83,32 @@ export class RegisterController {
         @UploadedFile() logo?: Express.Multer.File,
     ) {
         return this.registerService.completeRegistration(registerDto, logo);
+    }
+
+    /*MODIFICACION DE METODOS */
+
+    //Endpoint POST: Registrar un cliente con el logo como Link o texto
+    @Post('registro-text')
+    @ApiOperation({
+        summary:
+            'Registro completo de restaurante y usuario gerente con el logo como texto o link.',
+    })
+    @ApiBody({ type: RegisterTextDto })
+    @ApiResponse({
+        status: HttpStatus.CREATED,
+        schema: {
+            example: {
+                success: true,
+                message: 'Registro completado exitosamente',
+                data: { restauranteId: 1, usuarioId: 1 },
+            },
+        },
+    })
+    @ApiResponse({
+        status: HttpStatus.BAD_REQUEST,
+        description: 'Datos inválidos o faltantes',
+    })
+    async registerText(@Body() dto: RegisterTextDto) {
+        return this.registerService.completeRegistrationText(dto);
     }
 }

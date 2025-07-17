@@ -1,9 +1,10 @@
-import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Restaurante } from '../common/entities/restaurante.entity';
 import { UpdateRestauranteDto } from './dto/update-restaurante.dto';
 import { IStorageService } from '../common/interfaces/storage.interface';
+import { UpdateRestauranteTextDto } from './dto/update-restaurante-text.dto';
 
 @Injectable()
 export class RestaurantesService {
@@ -51,6 +52,45 @@ export class RestaurantesService {
                 filename,
                 'restaurante',
             );
+        }
+
+        return this.restauranteRepo.save(rest);
+    }
+
+    /*MODIFICACION DE METODOS */
+
+    //Actualizacion de datos de un restaurante la imagen como texto o link
+    async updateRestaurantText(
+        id: number,
+        dto: UpdateRestauranteTextDto,
+        restauranteIdFromToken: number,
+    ): Promise<Restaurante> {
+        const rest = await this.restauranteRepo.findOne({
+            where: { id_restaurante: id },
+        });
+        if (!rest) {
+            throw new NotFoundException(`Restaurante ${id} no encontrado`);
+        }
+
+        if (rest.id_restaurante !== restauranteIdFromToken) {
+            throw new UnauthorizedException(
+                'No puedes modificar un restaurante que no es tuyo',
+            );
+        }
+
+        // Campos editables
+        if (dto.nombre) rest.nombre = dto.nombre;
+        if (dto.email) rest.email = dto.email;
+        if (dto.direccion) rest.direccion = dto.direccion;
+        if (dto.telefono) rest.telefono = dto.telefono;
+        if (dto.descripcion) rest.descripcion = dto.descripcion;
+
+        // Logo como texto
+        if (dto.logoUrl !== undefined) {
+            if (dto.logoUrl.trim() === '') {
+                throw new BadRequestException('logoUrl no puede estar vacío');
+            }
+            rest.logo_url = dto.logoUrl;
         }
 
         return this.restauranteRepo.save(rest);

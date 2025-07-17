@@ -8,6 +8,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { AuthRequest } from 'src/common/interfaces/auth-request.interface';
 import { Restaurante } from 'src/common/entities/restaurante.entity';
+import { UpdateRestauranteTextDto } from 'src/services/dto/update-restaurante-text.dto';
 
 @ApiTags('restaurantes')
 @ApiBearerAuth('JWT-auth')
@@ -17,7 +18,7 @@ export class RestaurantesController {
         private readonly restaurantesService: RestaurantesService,
     ) { }
 
-    //Endpoint PUT: Actualizacion de datos de un restaurante - Uso Gerente/Administrador
+    //Endpoint PUT: Actualizacion de datos de un restaurante (Gestion) - Uso Gerente/Administrador
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('Gerente', 'Administrador')
     @Put('actualizar/:id')
@@ -29,7 +30,6 @@ export class RestaurantesController {
                   Swagger autocompleta todos los campos con valores de ejemplo. 
                   Si solo deseas modificar uno, borra los demás antes de enviar.`
     })
-    @ApiParam({ name: 'id', type: Number, example: 1, description: 'ID del restaurante' })
     @ApiBody({
         schema: {
             type: 'object',
@@ -57,16 +57,52 @@ export class RestaurantesController {
         description: 'Sin permisos o intentando modificar otro restaurante',
     })
     async update(
-        @Param('id') id: number,
         @Body() dto: UpdateRestauranteDto,
         @Req() req: AuthRequest,
         @UploadedFile() logo?: Express.Multer.File,
     ): Promise<Restaurante> {
+        const restauranteId = req.user.restaurante_id;
         return this.restaurantesService.updateRestaurant(
-            id,
+            restauranteId, 
             dto,
             logo,
-            req.user.restaurante_id,
+            restauranteId, 
+        );
+    }
+
+    /*MODIFICACION DE METODOS */
+
+    //Endpoint PUT: Actualizacion de datos de un restaurante (Gestion) - Uso Gerente/Administrador
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('Gerente', 'Administrador')
+    @Put('actualizar-ln/:id')
+    @ApiOperation({
+        summary: 'Actualizar datos de restaurante con el logo como link o texto ',
+        description: 'Este endpoint permite modificar un rextaurante con texto en el campo imagen, todos los campos son opcionales',
+    })
+    @ApiBody({ type: UpdateRestauranteTextDto })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Restaurante actualizado',
+        type: Restaurante,
+    })
+    @ApiResponse({
+        status: HttpStatus.NOT_FOUND,
+        description: 'Restaurante no encontrado',
+    })
+    @ApiResponse({
+        status: HttpStatus.UNAUTHORIZED,
+        description: 'Sin permisos o tratando de modificar otro restaurante',
+    })
+    async updateText(
+        @Body() dto: UpdateRestauranteTextDto,
+        @Req() req: AuthRequest,
+    ): Promise<Restaurante> {
+        const restauranteId = req.user.restaurante_id;
+        return this.restaurantesService.updateRestaurantText(
+            restauranteId,
+            dto,
+            restauranteId,
         );
     }
 }
