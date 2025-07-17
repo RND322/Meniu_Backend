@@ -240,7 +240,7 @@ export class ProductosController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Gerente', 'Administrador')
   @ApiBearerAuth('JWT-auth')
-  @Put('actualizar-productoln/:id')
+  @Put('actualizar-producto-ln/:id')
   @ApiParam({ name: 'id', type: Number })
   @ApiOperation({
     summary: 'Actualizar producto con imagen como link o texto (Gestion) - Uso para Gerente, Administrador',
