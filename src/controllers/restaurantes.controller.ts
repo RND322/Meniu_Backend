@@ -1,4 +1,4 @@
-import { Controller, Put, Param, Body, UseGuards, UploadedFile, UseInterceptors, HttpStatus, Req } from '@nestjs/common';
+import { Controller, Put, Param, Body, UseGuards, UploadedFile, UseInterceptors, HttpStatus, Req, Get } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiParam, ApiConsumes, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RestaurantesService } from 'src/services/restaurantes.service';
@@ -9,6 +9,7 @@ import { Roles } from 'src/auth/roles.decorator';
 import { AuthRequest } from 'src/common/interfaces/auth-request.interface';
 import { Restaurante } from 'src/common/entities/restaurante.entity';
 import { UpdateRestauranteTextDto } from 'src/services/dto/update-restaurante-text.dto';
+import { RestauranteResponseDto } from 'src/services/dto/restaurante-response.dto';
 
 @ApiTags('restaurantes')
 @ApiBearerAuth('JWT-auth')
@@ -63,11 +64,44 @@ export class RestaurantesController {
     ): Promise<Restaurante> {
         const restauranteId = req.user.restaurante_id;
         return this.restaurantesService.updateRestaurant(
-            restauranteId, 
+            restauranteId,
             dto,
             logo,
-            restauranteId, 
+            restauranteId,
         );
+    }
+
+    //Endpoint GET: Obtener los datos de un restaurante
+    @Get('obtener/:id')
+    @ApiOperation({ summary: 'Obtener los datos de un restaurante por ID' })
+    @ApiParam({ name: 'id', type: Number, example: 1 })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Datos del restaurante',
+        type: RestauranteResponseDto,
+    })
+    @ApiResponse({
+        status: HttpStatus.NOT_FOUND,
+        description: 'Restaurante no encontrado',
+    })
+    async findOnePublic(
+        @Param('id') id: number,
+    ): Promise<RestauranteResponseDto> {
+        const rest: Restaurante =
+            await this.restaurantesService.findOnePublic(id);
+
+        // Mapeo explícito a DTO
+        return {
+            id_restaurante: rest.id_restaurante,
+            nombre: rest.nombre,
+            email: rest.email,
+            direccion: rest.direccion,
+            telefono: rest.telefono,
+            logo_url: rest.logo_url,
+            descripcion: rest.descripcion,
+            activo: !!rest.activo,
+            fechaCreacion: rest.fechaCreacion,
+        };
     }
 
     /*MODIFICACION DE METODOS */

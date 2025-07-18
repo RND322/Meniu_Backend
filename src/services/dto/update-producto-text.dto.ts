@@ -13,9 +13,11 @@ export class UpdateProductoTextDto {
   @IsOptional() @Transform(({ value }) => value ? Number(value) : undefined)
   @IsNumber() @Min(0.01) precio?: number;
 
-  @ApiPropertyOptional({ example: 0 })
-  @IsOptional() @Transform(({ value }) => value ? Number(value) : undefined)
-  @IsNumber() activo?: number;
+  @ApiPropertyOptional({ example: 0, description: 'Activo: 1 o 0' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'activo debe ser numérico' })
+  activo?: number;
 
   @ApiPropertyOptional({ example: 2 })
   @IsOptional() @Transform(({ value }) => value ? Number(value) : undefined)

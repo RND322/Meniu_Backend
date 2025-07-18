@@ -57,6 +57,17 @@ export class RestaurantesService {
         return this.restauranteRepo.save(rest);
     }
 
+    //Obtener los datos de un restaurante
+    async findOnePublic(id: number): Promise<Restaurante> {
+        const rest = await this.restauranteRepo.findOne({
+            where: { id_restaurante: id },
+        });
+        if (!rest) {
+            throw new NotFoundException(`Restaurante ${id} no encontrado`);
+        }
+        return rest;
+    }
+
     /*MODIFICACION DE METODOS */
 
     //Actualizacion de datos de un restaurante la imagen como texto o link
