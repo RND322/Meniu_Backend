@@ -12,7 +12,6 @@ import { UpdateRestauranteTextDto } from 'src/services/dto/update-restaurante-te
 import { RestauranteResponseDto } from 'src/services/dto/restaurante-response.dto';
 
 @ApiTags('restaurantes')
-@ApiBearerAuth('JWT-auth')
 @Controller('restaurantes')
 export class RestaurantesController {
     constructor(
@@ -22,6 +21,7 @@ export class RestaurantesController {
     //Endpoint PUT: Actualizacion de datos de un restaurante (Gestion) - Uso Gerente/Administrador
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('Gerente', 'Administrador')
+    @ApiBearerAuth('JWT-auth')
     @Put('actualizar/:id')
     @UseInterceptors(FileInterceptor('logo'))
     @ApiConsumes('multipart/form-data')
@@ -109,6 +109,7 @@ export class RestaurantesController {
     //Endpoint PUT: Actualizacion de datos de un restaurante (Gestion) - Uso Gerente/Administrador
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('Gerente', 'Administrador')
+    @ApiBearerAuth('JWT-auth')
     @Put('actualizar-ln/:id')
     @ApiOperation({
         summary: 'Actualizar datos de restaurante con el logo como link o texto ',

@@ -11,14 +11,15 @@ import { AuthRequest } from '../common/interfaces/auth-request.interface';
 import { UpdateMesaDto } from 'src/services/dto/update-mesa.dto';
 import { UpdateMesaTextDto } from 'src/services/dto/update-mesa-text.dto';
 import { CreateMesaTextDto } from 'src/services/dto/create-mesa-text.dto';
+import { MesaResponseDto } from 'src/services/dto/mesa-response.dto';
 
 @ApiTags('mesas')
-@ApiBearerAuth('JWT-auth')
 @Controller('mesas')
 export class MesasController {
   constructor(private readonly mesasService: MesasService) { }
 
   // Endpoint POST: Crear una mesa
+  @ApiBearerAuth('JWT-auth')
   @Post('crear-mesa')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Administrador', 'Gerente')
@@ -89,6 +90,7 @@ export class MesasController {
   }
 
   // Endpoint PUT: Actualizar detalles de una mesa
+  @ApiBearerAuth('JWT-auth')
   @Put('actualizar/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Administrador', 'Gerente')
@@ -164,6 +166,7 @@ export class MesasController {
   }
 
   // Endpoint GET: Obtener todas las mesas de un restaurante con sus detalles
+  @ApiBearerAuth('JWT-auth')
   @Get('restaurante-mesas')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Administrador', 'Gerente')
@@ -187,6 +190,7 @@ export class MesasController {
   /*MODIFICACION DE METODOS */
 
   // Endpoint POST: Crear una mesa con texto o link como imagen
+  @ApiBearerAuth('JWT-auth')
   @Post('crear-mesa-ln')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Administrador', 'Gerente')
@@ -211,6 +215,7 @@ export class MesasController {
   }
 
   // Endpoint PUT: Modificar una mesa con texto o link como imagen
+  @ApiBearerAuth('JWT-auth')
   @Put('actualizar-mesa-ln/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Administrador', 'Gerente')
@@ -235,5 +240,35 @@ export class MesasController {
       dto,
       req.user.restaurante_id,
     );
+  }
+
+  //Endpoint GET: Obtener los detalles de una mesa con su id
+  @Get('obtener-detalles/:id')
+  @ApiParam({ name: 'id', type: Number, example: 5, description: 'ID de la mesa' })
+  @ApiOperation({ summary: 'Obtener datos de una mesa por ID (público)' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Datos de la mesa',
+    type: MesaResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Mesa no encontrada',
+  })
+  async findOnePublic(
+    @Param('id') id: number,
+  ): Promise<MesaResponseDto> {
+    const m: Mesa = await this.mesasService.findOnePublic(id);
+
+    return {
+      id_mesa: m.id_mesa,
+      numero_mesa: m.numero_mesa,
+      qr_code: m.qr_code,
+      estado_mesa: m.estado_mesa,
+      restaurante: {
+        id_restaurante: m.restaurante.id_restaurante,
+        nombre: m.restaurante.nombre,
+      },
+    };
   }
 }

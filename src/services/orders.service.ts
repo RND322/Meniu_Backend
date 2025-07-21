@@ -310,4 +310,18 @@ export class OrdersService {
     if (!o) throw new NotFoundException('Orden no encontrada');
     return o;
   }
+
+  //Obtener una orden publico
+  async findOnePublic(idOrden: number): Promise<Orden> {
+    const order = await this.ordenRepository.findOne({
+      where: { id_orden: idOrden },
+      relations: ['restaurante', 'mesa', 'items', 'items.producto'],
+    });
+    if (!order) {
+      throw new NotFoundException(`Orden ${idOrden} no encontrada`);
+    }
+    return order;
+  }
+
+
 }

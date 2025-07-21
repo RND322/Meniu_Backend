@@ -93,6 +93,18 @@ export class MesasService {
         });
     }
 
+    //Obtener los detalles de una mesa publicox
+    async findOnePublic(idMesa: number): Promise<Mesa> {
+        const mesa = await this.mesaRepository.findOne({
+            where: { id_mesa: idMesa },
+            relations: ['restaurante'],
+        });
+        if (!mesa) {
+            throw new NotFoundException(`Mesa ${idMesa} no encontrada`);
+        }
+        return mesa;
+    }
+
     /*MODIFICACION DE METODOS */
 
     //Creacion de mesa con texto como imagen

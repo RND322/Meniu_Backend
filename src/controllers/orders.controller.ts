@@ -331,7 +331,7 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Cocinero')
   @Get('cocina-orden/:id')
-  @ApiBearerAuth('JWT-auth') 
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Ver detalle de orden PENDIENTE (Gestion) - Uso para Cocinero' })
   @ApiParam({ name: 'id', type: Number, example: 10 })
   @ApiResponse({
@@ -377,6 +377,26 @@ export class OrdersController {
   ): Promise<OrderResponseDto> {
     const rid = req.user.restaurante_id;
     const order = await this.ordersService.findOneForStaff(id, rid);
+    return this.mapToDto(order);
+  }
+
+  //Endpoint GET: Obtener todas los detalles de una orden publico
+  @Get('detalles-orden/:id')
+  @ApiOperation({ summary: 'Obtener detalle de orden por ID' })
+  @ApiParam({ name: 'id', type: Number, example: 10 })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Detalle de la orden',
+    type: OrderResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Orden no encontrada',
+  })
+  async findOnePublic(
+    @Param('id') id: number,
+  ): Promise<OrderResponseDto> {
+    const order = await this.ordersService.findOnePublic(id);
     return this.mapToDto(order);
   }
 }
