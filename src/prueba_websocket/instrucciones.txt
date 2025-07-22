@@ -1,0 +1,3 @@
+Importante al probar los websockets con estos html de prueba se infiere que el valor de restauranteId es igual 1,
+po lo tanto los valores que se envien en ordenes debe ser de el restaurante con id 1, tanto la mesa como el producto
+y demas detalles.

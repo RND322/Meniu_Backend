@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Restaurante } from './restaurante.entity';
 import { MetodoPago } from './metodo-pago.entity';
 import { Plan } from './plan.entity';
@@ -6,23 +6,26 @@ import { Plan } from './plan.entity';
 @Entity('suscripciones')
 export class Suscripcion {
   @PrimaryGeneratedColumn()
-  id_suscripcion: number;
+  id_suscripcion!: number;
 
   @Column({ type: 'date' })
-  fecha_inicio: string;
+  fecha_inicio!: Date;
 
   @Column({ type: 'date' })
-  fecha_cobro: string;
+  fecha_cobro!: Date;
 
   @Column({ default: 1 })
-  activa: number;
+  activa!: number;
 
   @ManyToOne(() => Restaurante, restaurante => restaurante.suscripciones)
-  restaurante: Restaurante;
+  @JoinColumn({ name: 'id_restaurante' })
+  restaurante!: Restaurante;
 
   @ManyToOne(() => MetodoPago, metodoPago => metodoPago.suscripciones)
-  metodoPago: MetodoPago;
+  @JoinColumn({ name: 'id_metodo_pago' })
+  metodoPago!: MetodoPago;
 
   @ManyToOne(() => Plan, plan => plan.suscripciones)
-  plan: Plan;
+  @JoinColumn({ name: 'id_plan' })
+  plan!: Plan;
 }

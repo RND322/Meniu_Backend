@@ -1,0 +1,37 @@
+En el proyecto esta instalado Swagger para poder probar los endpoints la direccion es: 
+
+http://localhost:3000/api
+
+
+Algunos endpoints que tienen candado le piden una autorizacion como usarla
+
+1. Tienen que tener un usuario registrado en la base de datos,es necesario que tengan datos de restaurante para algunos de los endpoints,
+por lo tanto lo primero es usar el endpoint de register.. 
+2. Al usar el endpoint de iniciar sesion este les traera de respuesta un token que se vera algo asi:
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+
+Ese token lo copian y se van al candado de la api o al authorize que esta hasta arriba en el swagger y lo ponen.
+
+3. Listo ya deberian poder usar los endpoints que tienen seguridad
+
+** Todos los endpoints verifican que los que pidan coincidan con el restaurante del usuario que lo solicita.
+
+//
+.env
+
+DB_TYPE=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_USERNAME=root
+DB_PASSWORD=password123
+DB_NAME=sistema_meniu
+DB_SYNCHRONIZE=true
+
+JWT_SECRET=super_secret_jwt_key
+
+AZURE_STORAGE_CONNECTION_STRING=...tu_connection_string...
+AZURE_CONTAINER_NAME=platillos
+NODE_ENV=production
+
+//

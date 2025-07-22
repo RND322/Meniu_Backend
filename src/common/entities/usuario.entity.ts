@@ -1,39 +1,41 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Rol } from './rol.entity';
 import { Persona } from './persona.entity';
 import { Email } from './email.entity';
 import { Restaurante } from './restaurante.entity';
-import { MetodoPago } from './metodo-pago.entity'; 
+import { MetodoPago } from './metodo-pago.entity';
 
 @Entity('usuarios')
 export class Usuario {
   @PrimaryGeneratedColumn()
-  id_usuario: number;
+  id_usuario!: number;
 
-  @Column({ name: 'nombre_usuario' })
-  nombreUsuario: string;
+  @Column({ name: 'nombre_usuario', length: 100 })
+  nombreUsuario!: string;
 
-  @Column()
-  password: string;
+  @Column({ length: 100 })
+  password!: string;
 
   @Column({ default: 1 })
-  activo: number;
+  activo!: number;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  fechaCreacion: Date;
+  fechaCreacion!: Date;
 
   @ManyToOne(() => Rol, rol => rol.usuarios)
-  rol: Rol;
+  @JoinColumn({ name: 'id_rol' })
+  rol!: Rol;
 
   @OneToMany(() => Persona, persona => persona.usuario)
-  personas: Persona[];
+  personas!: Persona[];
 
   @OneToMany(() => Email, email => email.usuario)
-  emails: Email[];
+  emails!: Email[];
 
-  @OneToMany(() => Restaurante, restaurante => restaurante.usuario)
-  restaurantes: Restaurante[];
+  @ManyToOne(() => Restaurante, restaurante => restaurante.usuarios, { nullable: false, eager: true })
+  @JoinColumn({ name: 'id_restaurante' })
+  restaurante!: Restaurante;
 
   @OneToMany(() => MetodoPago, metodoPago => metodoPago.usuario)
-  metodosPago: MetodoPago[];
+  metodosPago!: MetodoPago[];
 }

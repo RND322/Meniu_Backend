@@ -4,6 +4,11 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
+// Módulos
+import { AuthModule } from './auth/auth.module';
+import { EventsModule } from './events/events.module';
+import { OrdersModule } from './controllers/orders.module';
+
 //Entidades
 import { Rol } from './common/entities/rol.entity';
 import { Usuario } from './common/entities/usuario.entity';
@@ -19,17 +24,60 @@ import { OrdenItem } from './common/entities/orden-item.entity';
 import { Plan } from './common/entities/plan.entity';
 import { MetodoPago } from './common/entities/metodo-pago.entity';
 import { Suscripcion } from './common/entities/suscripcion.entity';
-import { AuthModule } from './auth/auth.module';
+import { ProductoComplemento } from './common/entities/producto-complemento.entity';
+
+// Servicios
+import { ProductosService } from './services/productos.service';
+import { PersonasService } from './services/personas.service';
+import { UsuariosService } from './services/usuarios.service';
+import { MesasService } from './services/mesas.service';
+import { PlanesService } from './services/planes.service';
+import { RegisterService } from './services/register.service';
+import { OrdersService } from './services/orders.service';
+import { CategoriasService } from './services/categorias.service';
+import { RolesService } from './services/roles.service';
+import { RestaurantesService } from './services/restaurantes.service';
+
+import { LocalStorageService } from './common/services/local-storage.service';
+//import { AzureBlobStorageService } from './common/services/azure-blob-storage.service';
+
+// Controladores
+import { ProductosController } from './controllers/productos.controller';
+import { PersonasController } from './controllers/personas.controller';
+import { UsuariosController } from './controllers/usuarios.controller';
+import { MesasController } from './controllers/mesas.controller';
+import { PlanesController } from './controllers/planes.controller';
+import { RegisterController } from './controllers/register.controller';
+import { OrdersController } from './controllers/orders.controller';
+import { CategoriasController } from './controllers/categorias.controller';
+import { RolesController } from './controllers/roles.controller';
+import { RestaurantesController } from './controllers/restaurantes.controller';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
-     ConfigModule.forRoot({
+    // Carga variables de entorno
+    ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
-    
+
+
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1h' },
+      }),
+    }),
+
+    // Módulos externos
     AuthModule,
-  
+
+    // Conexión a la BD con TypeORM
     TypeOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
         type: 'mysql' as const,
@@ -44,13 +92,61 @@ import { AuthModule } from './auth/auth.module';
       }),
       inject: [ConfigService],
     }),
+
+    //Prueba gateway websocket
+    OrdersModule,
+    EventsModule,
+
+    // Registra todas las entidades como feature modules
+    TypeOrmModule.forFeature([
+      Rol,
+      Usuario,
+      Persona,
+      Email,
+      Restaurante,
+      Mesa,
+      CategoriaProducto,
+      SubcategoriaProducto,
+      Producto,
+      Orden,
+      OrdenItem,
+      Plan,
+      MetodoPago,
+      Suscripcion,
+      ProductoComplemento
+    ]),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [
+    AppController,
+    ProductosController,
+    PersonasController,
+    UsuariosController,
+    MesasController,
+    PlanesController,
+    RegisterController,
+    CategoriasController,
+    RolesController,
+    RestaurantesController
+    //OrdersController, // Registro del controlador
+  ],
+  providers: [
+    AppService,
+    ProductosService,
+    PersonasService,
+    UsuariosService,
+    MesasService,
+    PlanesService,
+    RegisterService,
+    CategoriasService,
+    RolesService,
+    RestaurantesService,
+    //OrdersService,
+    JwtStrategy, // Registro del servicio
+    {
+      provide: 'IStorageService',
+      useClass: LocalStorageService,  //AzureBlobStorageService, En caso para Azure
+    },
+  ],
+  exports: [JwtStrategy, PassportModule],
 })
-export class AppModule {}
-
-
-
-
-
+export class AppModule { }

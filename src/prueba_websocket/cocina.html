@@ -1,0 +1,29 @@
+<!-- cocina.html -->
+<!DOCTYPE html><html><body>
+  <h1>🧑‍🍳 Panel Cocina</h1>
+  <ul id="pedidos"></ul>
+
+  <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"></script>
+  <script>
+    const RESTAURANTE_ID = 1;
+    const socket = io('http://localhost:3000', {
+      query: { role: 'cocina', restauranteId: RESTAURANTE_ID },
+    });
+
+    const pedidos = document.getElementById('pedidos');
+
+    socket.on('joined', room => console.log(`✅ Unido a sala ${room}`));
+    socket.on('nueva_orden', orden => {
+      console.log('🧑‍🍳 Nueva orden en cocina:', orden);
+
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <strong>Orden ${orden.id_orden}</strong> — Mesa ${orden.mesa.numero_mesa}
+        <ul>
+          ${orden.items.map(i => `<li>${i.nombre_producto} x${i.cantidad}</li>`).join('')}
+        </ul>
+      `;
+      pedidos.appendChild(li);
+    });
+  </script>
+</body></html>

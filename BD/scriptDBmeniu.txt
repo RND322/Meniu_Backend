@@ -1,0 +1,160 @@
+CREATE DATABASE IF NOT EXISTS sistema_meniu;
+USE sistema_meniu;
+
+
+-- Tabla: roles
+CREATE TABLE roles (
+    id_rol INT PRIMARY KEY AUTO_INCREMENT,
+    nombre_rol VARCHAR(50) NOT NULL
+);
+
+-- Tabla: restaurantes
+CREATE TABLE restaurantes (
+    id_restaurante INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100),
+    email VARCHAR(150),
+    direccion VARCHAR(255),
+    telefono VARCHAR(20),
+    logo_url VARCHAR(255),
+    descripcion TEXT,
+    activo TINYINT(1) DEFAULT 1,
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla: usuarios 
+CREATE TABLE usuarios (
+    id_usuario INT PRIMARY KEY AUTO_INCREMENT,
+    id_rol INT,
+    id_restaurante INT, 
+    nombre_usuario VARCHAR(100) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    activo TINYINT(1) DEFAULT 1,
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_rol) REFERENCES roles(id_rol),
+    FOREIGN KEY (id_restaurante) REFERENCES restaurantes(id_restaurante)
+);
+
+-- Tabla: personas
+CREATE TABLE personas (
+    id_persona INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT,
+    nombre VARCHAR(100),
+    apellidos VARCHAR(100),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+);
+
+-- Tabla: emails
+CREATE TABLE emails (
+    id_email INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT,
+    email VARCHAR(150),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+);
+
+-- Tabla: mesas
+CREATE TABLE mesas (
+    id_mesa INT PRIMARY KEY AUTO_INCREMENT,
+    id_restaurante INT,
+    numero_mesa INT,
+    qr_code VARCHAR(255),
+    estado_mesa VARCHAR(50),
+    FOREIGN KEY (id_restaurante) REFERENCES restaurantes(id_restaurante)
+);
+
+-- Tabla: categorias_productos
+CREATE TABLE categorias_productos (
+    id_categoria INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100),
+    activa TINYINT(1) DEFAULT 1
+);
+
+-- Tabla: subcategorias_productos
+CREATE TABLE subcategorias_productos (
+    id_subcategoria INT PRIMARY KEY AUTO_INCREMENT,
+    id_categoria INT,
+    nombre VARCHAR(100),
+    activa TINYINT(1) DEFAULT 1,
+    FOREIGN KEY (id_categoria) REFERENCES categorias_productos(id_categoria)
+);
+
+-- Tabla: productos
+CREATE TABLE productos (
+    id_producto INT PRIMARY KEY AUTO_INCREMENT,
+    id_restaurante INT,
+    id_subcategoria INT,
+    nombre VARCHAR(100),
+    descripcion TEXT,
+    precio DECIMAL(10,2),
+    imagen_url VARCHAR(255),
+    activo TINYINT(1) DEFAULT 1,
+    FOREIGN KEY (id_restaurante) REFERENCES restaurantes(id_restaurante),
+    FOREIGN KEY (id_subcategoria) REFERENCES subcategorias_productos(id_subcategoria)
+);
+
+-- Tabla: ordenes
+CREATE TABLE ordenes (
+    id_orden INT PRIMARY KEY AUTO_INCREMENT,
+    id_restaurante INT,
+    id_mesa INT,
+    estado VARCHAR(50),
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    hora_confirmacion TIME,
+    hora_lista TIME,
+    hora_entregada TIME,
+    subtotal DECIMAL(10,2),
+    impuestos DECIMAL(10,2),
+    total DECIMAL(10,2),
+    solicitud_pago TINYINT(1) DEFAULT 0,
+    notas TEXT,
+    FOREIGN KEY (id_restaurante) REFERENCES restaurantes(id_restaurante),
+    FOREIGN KEY (id_mesa) REFERENCES mesas(id_mesa)
+);
+
+-- Tabla: orden_items
+CREATE TABLE orden_items (
+    id_orden_item INT PRIMARY KEY AUTO_INCREMENT,
+    id_orden INT,
+    id_producto INT,
+    cantidad INT,
+    precio_unitario DECIMAL(10,2),
+    FOREIGN KEY (id_orden) REFERENCES ordenes(id_orden),
+    FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
+);
+
+-- Tabla: planes
+CREATE TABLE planes (
+    id_plan INT PRIMARY KEY AUTO_INCREMENT,
+    nombre_plan VARCHAR(100),
+    numero_mesas INT,
+    numero_productos INT,
+    numero_cocineros INT,
+    precio DECIMAL(10,2)
+);
+
+-- Tabla: metodo_pago
+CREATE TABLE metodo_pago (
+    id_metodo_pago INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT,
+    nombre_propietario VARCHAR(100),
+    numero_tarjeta VARCHAR(20),
+    cvv VARCHAR(5),
+    mes_expiracion INT,
+    anio_expiracion INT,
+    activo TINYINT(1) DEFAULT 1,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+);
+
+-- Tabla: suscripciones
+CREATE TABLE suscripciones (
+    id_suscripcion INT PRIMARY KEY AUTO_INCREMENT,
+    id_restaurante INT,
+    id_metodo_pago INT,
+    id_plan INT,
+    fecha_inicio DATE,
+    fecha_cobro DATE,
+    activa TINYINT(1) DEFAULT 1,
+    FOREIGN KEY (id_restaurante) REFERENCES restaurantes(id_restaurante),
+    FOREIGN KEY (id_metodo_pago) REFERENCES metodo_pago(id_metodo_pago),
+    FOREIGN KEY (id_plan) REFERENCES planes(id_plan)
+);
+

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Usuario } from './usuario.entity';
 import { Mesa } from './mesa.entity';
 import { Producto } from './producto.entity';
@@ -8,44 +8,44 @@ import { Suscripcion } from './suscripcion.entity';
 @Entity('restaurantes')
 export class Restaurante {
   @PrimaryGeneratedColumn()
-  id_restaurante: number;
+  id_restaurante!: number;
+
+  @Column({ length: 100 })
+  nombre!: string;
+
+  @Column({ length: 150 })
+  email!: string;
 
   @Column()
-  nombre: string;
+  direccion!: string;
+
+  @Column({ length: 20 })
+  telefono!: string;
 
   @Column()
-  email: string;
-
-  @Column()
-  direccion: string;
-
-  @Column()
-  telefono: string;
-
-  @Column()
-  logo_url: string;
+  logo_url!: string;
 
   @Column('text')
-  descripcion: string;
+  descripcion!: string;
 
   @Column({ default: 1 })
-  activo: number;
+  activo!: number;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  fechaCreacion: Date;
+  fechaCreacion!: Date;
 
-  @ManyToOne(() => Usuario, usuario => usuario.restaurantes)
-  usuario: Usuario;
+  @OneToMany(() => Usuario, usuario => usuario.restaurante)
+  usuarios!: Usuario[];
 
   @OneToMany(() => Mesa, mesa => mesa.restaurante)
-  mesas: Mesa[];
+  mesas!: Mesa[];
 
   @OneToMany(() => Producto, producto => producto.restaurante)
-  productos: Producto[];
+  productos!: Producto[];
 
   @OneToMany(() => Orden, orden => orden.restaurante)
-  ordenes: Orden[];
+  ordenes!: Orden[];
 
   @OneToMany(() => Suscripcion, suscripcion => suscripcion.restaurante)
-  suscripciones: Suscripcion[];
+  suscripciones!: Suscripcion[];
 }

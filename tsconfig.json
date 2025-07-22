@@ -16,6 +16,13 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+
+    "rootDir": "./src",            // Indica donde está tu código
+    "esModuleInterop": true,       // Permite usar 'import x from "x"'
+    "strict": true,               // Activa todas las verificaciones estrictas
+    "types": ["reflect-metadata", "multer", "jest"] // Tipos globales
+  },
+  "include": ["src/**/*"]
 }
+
