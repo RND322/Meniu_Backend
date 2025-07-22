@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.36, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: sistema_meniu
 -- ------------------------------------------------------
--- Server version	8.0.42-0ubuntu0.24.04.2
+-- Server version	8.0.36
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -289,6 +289,33 @@ INSERT INTO `productos` VALUES (1,1,1,'Fanta','Refresco',67.50,'/uploads/product
 UNLOCK TABLES;
 
 --
+-- Table structure for table `productos_complementos`
+--
+
+DROP TABLE IF EXISTS `productos_complementos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `productos_complementos` (
+  `id_producto_principal` int NOT NULL,
+  `id_producto_complemento` int NOT NULL,
+  PRIMARY KEY (`id_producto_principal`,`id_producto_complemento`),
+  KEY `FK_064945b8906bc61231613d67a33` (`id_producto_complemento`),
+  CONSTRAINT `FK_064945b8906bc61231613d67a33` FOREIGN KEY (`id_producto_complemento`) REFERENCES `productos` (`id_producto`),
+  CONSTRAINT `FK_57af7862ec72b3c017ac8f8e785` FOREIGN KEY (`id_producto_principal`) REFERENCES `productos` (`id_producto`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `productos_complementos`
+--
+
+LOCK TABLES `productos_complementos` WRITE;
+/*!40000 ALTER TABLE `productos_complementos` DISABLE KEYS */;
+INSERT INTO `productos_complementos` VALUES (5,1),(5,3);
+/*!40000 ALTER TABLE `productos_complementos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `restaurantes`
 --
 
@@ -448,4 +475,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-15 23:21:39
+-- Dump completed on 2025-07-21 20:47:56

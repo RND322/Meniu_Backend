@@ -10,6 +10,7 @@ import { LocalStorageService } from '../common/services/local-storage.service';
 import { Restaurante } from 'src/common/entities/restaurante.entity';
 import { UpdateProductoTextDto } from './dto/update-producto-text.dto';
 import { CreateProductoTextDto } from './dto/create-producto-text.dto';
+import { ProductoComplemento } from 'src/common/entities/producto-complemento.entity';
 
 
 @Injectable()
@@ -19,6 +20,9 @@ export class ProductosService {
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(Restaurante)
     private restauranteRepository: Repository<Restaurante>,
+
+    @InjectRepository(ProductoComplemento)
+    private readonly complementoRepo: Repository<ProductoComplemento>,
 
     @Inject('IStorageService')
     private readonly storage: IStorageService,
@@ -229,5 +233,42 @@ export class ProductosService {
     if (dto.imagen) p.imagen_url = dto.imagen;
 
     return this.productoRepository.save(p);
+  }
+
+  //Obtener producto con sus complementos
+  async obtenerProductoConComplementos(id: number) {
+    const producto = await this.productoRepository.findOne({
+      where: { id_producto: id, activo: 1 },
+    });
+
+    if (!producto) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+
+    const complementosRelaciones = await this.complementoRepo.find({
+      where: { id_producto_principal: id },
+      relations: ['complemento'],
+    });
+
+    const complementos = complementosRelaciones
+      .filter((rel) => rel.complemento.activo === 1)
+      .map((rel) => ({
+        id: rel.complemento.id_producto,
+        nombre: rel.complemento.nombre,
+        descripcion: rel.complemento.descripcion,
+        precio: parseFloat(rel.complemento.precio.toString()),
+        imagen_url: rel.complemento.imagen_url,
+      }));
+
+    return {
+      producto_principal: {
+        id: producto.id_producto,
+        nombre: producto.nombre,
+        descripcion: producto.descripcion,
+        precio_base: parseFloat(producto.precio.toString()),
+        imagen_url: producto.imagen_url,
+      },
+      complementos,
+    };
   }
 }

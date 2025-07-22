@@ -259,4 +259,10 @@ export class ProductosController {
       req.user.restaurante_id,
     );
   }
+
+  // Endpoint GET - Obtener producto con sus complementos
+  @Get('complementos/:id')
+  async obtenerProductoConComplementos(@Param('id') id: string) {
+    return this.productosService.obtenerProductoConComplementos(Number(id));
+  }
 }

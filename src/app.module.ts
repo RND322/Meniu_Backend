@@ -24,6 +24,7 @@ import { OrdenItem } from './common/entities/orden-item.entity';
 import { Plan } from './common/entities/plan.entity';
 import { MetodoPago } from './common/entities/metodo-pago.entity';
 import { Suscripcion } from './common/entities/suscripcion.entity';
+import { ProductoComplemento } from './common/entities/producto-complemento.entity';
 
 // Servicios
 import { ProductosService } from './services/productos.service';
@@ -111,7 +112,8 @@ import { JwtStrategy } from './auth/jwt.strategy';
       OrdenItem,
       Plan,
       MetodoPago,
-      Suscripcion
+      Suscripcion,
+      ProductoComplemento
     ]),
   ],
   controllers: [
