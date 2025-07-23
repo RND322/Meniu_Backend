@@ -11,6 +11,7 @@ import { Restaurante } from 'src/common/entities/restaurante.entity';
 import { UpdateProductoTextDto } from './dto/update-producto-text.dto';
 import { CreateProductoTextDto } from './dto/create-producto-text.dto';
 import { ProductoComplemento } from 'src/common/entities/producto-complemento.entity';
+import { CreateComplementoDto } from './dto/create-complemento.dto';
 
 
 @Injectable()
@@ -251,7 +252,7 @@ export class ProductosService {
     });
 
     const complementos = complementosRelaciones
-      .filter((rel) => rel.complemento.activo === 1)
+      .filter((rel) => rel.estado === 1 && rel.complemento.activo === 1)
       .map((rel) => ({
         id: rel.complemento.id_producto,
         nombre: rel.complemento.nombre,
@@ -271,4 +272,50 @@ export class ProductosService {
       complementos,
     };
   }
+
+  //Crear complemento
+  async crearComplemento(dto: CreateComplementoDto) {
+    const existente = await this.complementoRepo.findOne({
+      where: {
+        id_producto_principal: dto.id_producto_principal,
+        id_producto_complemento: dto.id_producto_complemento,
+      },
+    });
+
+    if (existente) {
+      if (existente.estado === 1) {
+        throw new Error('Este complemento ya está registrado');
+      } else {
+        // Si fue eliminado lógicamente, lo reactivamos
+        existente.estado = 1;
+        return this.complementoRepo.save(existente);
+      }
+    }
+
+    const nuevo = this.complementoRepo.create({
+      ...dto,
+      estado: 1,
+    });
+
+    return this.complementoRepo.save(nuevo);
+  }
+
+  //Eliminar complemento lógicamente
+  async eliminarComplemento(idPrincipal: number, idComplemento: number) {
+    const existente = await this.complementoRepo.findOne({
+      where: {
+        id_producto_principal: idPrincipal,
+        id_producto_complemento: idComplemento,
+        estado: 1,
+      },
+    });
+
+    if (!existente) {
+      throw new NotFoundException('Complemento no encontrado o ya eliminado');
+    }
+
+    existente.estado = 0;
+    return this.complementoRepo.save(existente);
+  }
+
 }
