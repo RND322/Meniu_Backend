@@ -298,6 +298,7 @@ DROP TABLE IF EXISTS `productos_complementos`;
 CREATE TABLE `productos_complementos` (
   `id_producto_principal` int NOT NULL,
   `id_producto_complemento` int NOT NULL,
+  `estado` tinyint NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_producto_principal`,`id_producto_complemento`),
   KEY `FK_064945b8906bc61231613d67a33` (`id_producto_complemento`),
   CONSTRAINT `FK_064945b8906bc61231613d67a33` FOREIGN KEY (`id_producto_complemento`) REFERENCES `productos` (`id_producto`),
@@ -311,7 +312,7 @@ CREATE TABLE `productos_complementos` (
 
 LOCK TABLES `productos_complementos` WRITE;
 /*!40000 ALTER TABLE `productos_complementos` DISABLE KEYS */;
-INSERT INTO `productos_complementos` VALUES (5,1),(5,3);
+INSERT INTO `productos_complementos` VALUES (5,1,1),(5,2,1),(5,3,1),(6,4,0);
 /*!40000 ALTER TABLE `productos_complementos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -475,4 +476,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-21 20:47:56
+-- Dump completed on 2025-07-22 19:42:44
