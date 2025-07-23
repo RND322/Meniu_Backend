@@ -12,6 +12,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Request } from 'express';
 import { UpdateProductoTextDto } from 'src/services/dto/update-producto-text.dto';
 import { CreateProductoTextDto } from 'src/services/dto/create-producto-text.dto';
+import { CreateComplementoDto} from 'src/services/dto/create-complemento.dto';
 
 @ApiTags('productos')
 @Controller('productos')
@@ -264,5 +265,38 @@ export class ProductosController {
   @Get('complementos/:id')
   async obtenerProductoConComplementos(@Param('id') id: string) {
     return this.productosService.obtenerProductoConComplementos(Number(id));
+  }
+
+  // Endpoint POST - Crear un complemento entre productos
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Gerente', 'Administrador')
+  @ApiBearerAuth('JWT-auth')
+  @Post('complementos')
+    @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        id_producto_principal: { type: 'number', example: '1' },
+        id_producto_complemento: { type: 'number', example: '2' },
+      },
+    },
+  })
+  async crearComplemento(@Body() dto: CreateComplementoDto) {
+    return this.productosService.crearComplemento(dto);
+  }
+
+  // Endpoint DELETE - Eliminar un complemento entre productos
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Gerente', 'Administrador')
+  @ApiBearerAuth('JWT-auth')
+  @Delete('complementos/:idPrincipal/:idComplemento')
+  async eliminarComplemento(
+    @Param('idPrincipal') idPrincipal: string,
+    @Param('idComplemento') idComplemento: string,
+  ) {
+    return this.productosService.eliminarComplemento(
+      Number(idPrincipal),
+      Number(idComplemento),
+    );
   }
 }
