@@ -132,6 +132,7 @@ export class OrdersService {
   async markReady(id: number, restauranteId: number) {
     const order = await this.ordenRepository.findOne({
       where: { id_orden: id, restaurante: { id_restaurante: restauranteId } },
+      relations: ['restaurante'],
     });
     if (!order) throw new NotFoundException('Orden no encontrada');
     if (order.estado !== 'PENDIENTE')
@@ -159,6 +160,7 @@ export class OrdersService {
   ) {
     const order = await this.ordenRepository.findOne({
       where: { id_orden: id, restaurante: { id_restaurante: restauranteId } },
+      relations: ['restaurante'],
     });
     if (!order) throw new NotFoundException('Orden no encontrada');
 
@@ -170,14 +172,14 @@ export class OrdersService {
       case 'cancelar':
         if (order.estado !== 'PENDIENTE')
           throw new BadRequestException(
-            'Solo “PENDIENTE” puede pasar a “CANCELADA”',
+            'Solo "PENDIENTE" puede pasar a "CANCELADA"',
           );
         order.estado = 'CANCELADA';
         break;
       case 'entregar':
         if (order.estado !== 'LISTO')
           throw new BadRequestException(
-            'Solo “LISTO” puede pasar a “ENTREGADA”',
+            'Solo "LISTO" puede pasar a "ENTREGADA"',
           );
         order.estado = 'ENTREGADA';
         order.hora_entregada = nowStr;
@@ -185,7 +187,7 @@ export class OrdersService {
       case 'pagar':
         if (order.estado !== 'ENTREGADA')
           throw new BadRequestException(
-            'Solo “ENTREGADA” puede pasar a “PAGADA”',
+            'Solo "ENTREGADA" puede pasar a "PAGADA"',
           );
         order.estado = 'PAGADA';
         break;
@@ -267,7 +269,7 @@ export class OrdersService {
         estado: 'PENDIENTE',
         restaurante: { id_restaurante: restauranteId },
       },
-      relations: ['mesa', 'items', 'items.producto'],
+      relations: ['restaurante', 'mesa', 'items', 'items.producto'],
       order: { fecha: 'ASC' },
     });
   }

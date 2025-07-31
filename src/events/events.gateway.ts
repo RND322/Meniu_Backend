@@ -1,18 +1,38 @@
 
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection } from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({ cors: { origin: '*' } })
-export class EventsGateway implements OnGatewayConnection {
+@WebSocketGateway({ 
+  cors: { origin: '*' },
+  transports: ['websocket', 'polling'],
+  pingTimeout: 60000,
+  pingInterval: 25000
+})
+export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server!: Server;
 
   handleConnection(client: Socket) {
     // Se esperam query params role y restauranteId
     const { role, restauranteId } = client.handshake.query as any;
+    
+    if (!role || !restauranteId) {
+      console.log(`❌ Socket ${client.id} rechazado - faltan parámetros`);
+      client.disconnect();
+      return;
+    }
+
     const room = `${role}-${restauranteId}`;
     client.join(room);
     client.emit('joined', room);
-    console.log(`Socket ${client.id} in ${room}`);
+    console.log(`✅ Socket ${client.id} conectado a ${room}`);
+  }
+
+  handleDisconnect(client: Socket) {
+    const { role, restauranteId } = client.handshake.query as any;
+    const room = `${role}-${restauranteId}`;
+    console.log(`❌ Socket ${client.id} desconectado de ${room}`);
+    
+    // La desconexión se maneja automáticamente por Socket.IO
   }
 
   notifyNewOrder(order: any) {

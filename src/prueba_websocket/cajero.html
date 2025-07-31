@@ -8,11 +8,24 @@
     const RESTAURANTE_ID = 1;
     const socket = io('http://localhost:3000', {
       query: { role: 'cajero', restauranteId: RESTAURANTE_ID },
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000
     });
 
     const lista = document.getElementById('lista');
 
+    socket.on('connect', () => {
+      console.log('🔗 Conectado al servidor');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('🔌 Desconectado del servidor');
+    });
+
     socket.on('joined', room => console.log(`✅ Unido a sala ${room}`));
+    
     socket.on('nueva_orden', orden => {
       console.log('💸 Nueva orden en caja:', orden);
 
@@ -21,15 +34,21 @@
       li.textContent = `Orden ${orden.id_orden} — Mesa ${orden.mesa.numero_mesa} — Total: $${orden.total}`;
       lista.appendChild(li);
 
-      // (Opcional) Botón para “marcar como cobrado”
+      // (Opcional) Botón para "marcar como cobrado"
       const btn = document.createElement('button');
       btn.textContent = 'Cobrar';
       btn.onclick = () => {
-        // aquí podrías llamar a un endpoint de “confirmar cobro”
+        // aquí podrías llamar a un endpoint de "confirmar cobro"
         btn.disabled = true;
         li.style.opacity = '0.5';
       };
       li.appendChild(btn);
+    });
+
+    // Manejar cierre de página
+    window.addEventListener('beforeunload', () => {
+      console.log('🔄 Cerrando conexión...');
+      socket.disconnect();
     });
   </script>
 </body></html>
